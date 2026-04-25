@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "TrackingEye",
+    "slug": "tracking-eye",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.anonymous.trackingeye"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset"
+    ],
+    "scheme": "trackingeye",
+    "extra": {
+      "EXPO_PUBLIC_SUPABASE_URL": "",
+      "EXPO_PUBLIC_SUPABASE_ANON_KEY": ""
+    }
+  }
+}
