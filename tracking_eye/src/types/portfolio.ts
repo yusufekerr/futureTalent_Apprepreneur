@@ -1,4 +1,4 @@
-export type AssetType = "Hisse" | "Kripto" | "Emtia" | "Fon" | "Doviz";
+export type AssetType = "Hisse" | "Kripto" | "Emtia" | "Fon" | "Döviz";
 
 export type Asset = {
   id: string;

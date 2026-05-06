@@ -1,5 +1,11 @@
 import type { Asset } from "@/types/portfolio";
 
+export const getTypeColor = (type: string) => {
+  const hash = type.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colorList = ["#3B82F6", "#8B5CF6", "#F59E0B", "#10B981", "#EC4899", "#06B6D4"];
+  return colorList[hash % colorList.length];
+};
+
 export function getAssetValue(asset: Asset): number {
   return asset.quantity * asset.currentPrice;
 }

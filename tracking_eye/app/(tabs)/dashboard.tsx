@@ -17,12 +17,18 @@ export default function DashboardScreen() {
 
   return (
     <Screen>
-      <SectionHeader title="TrackingEye Dashboard" subtitle="Portfoyunun genel ozeti" />
+      <View style={styles.headerWrap}>
+        <SectionHeader title="TrackingEye" subtitle="Portföyünüzün genel özeti" />
+      </View>
 
       <View style={styles.grid}>
-        <MetricCard title="Toplam Deger" value={formatCurrency(metrics.totalValue)} />
+        <MetricCard 
+          title="Toplam Değer" 
+          value={formatCurrency(metrics.totalValue)} 
+          gradient={true}
+        />
         <MetricCard
-          title="Toplam Kar/Zarar"
+          title="Toplam Kâr/Zarar"
           value={formatCurrency(metrics.totalPnL)}
           helper={formatPercent(metrics.pnlPercent)}
           positive={metrics.totalPnL >= 0}
@@ -31,7 +37,7 @@ export default function DashboardScreen() {
 
       <Card>
         <View style={styles.sectionHead}>
-          <Text style={styles.sectionTitle}>Varlik Dagilimi</Text>
+          <Text style={styles.sectionTitle}>Varlık Dağılımı</Text>
         </View>
         <AllocationBars items={distribution} />
       </Card>
@@ -39,26 +45,37 @@ export default function DashboardScreen() {
       <View style={styles.listWrap}>
         <View style={styles.sectionHead}>
           <Text style={styles.sectionTitle}>Son Eklenenler</Text>
-          <Text style={styles.count}>{assets.length} varlik</Text>
+          <Text style={styles.count}>{assets.length} varlık</Text>
         </View>
-        {assets.slice(0, 3).map((asset) => (
-          <AssetRow key={asset.id} asset={asset} onPress={() => router.push(`/asset/${asset.id}`)} />
-        ))}
+        <View style={styles.listContainer}>
+          {assets.length === 0 ? (
+            <Text style={styles.emptyText}>Henüz varlık eklenmedi.</Text>
+          ) : (
+            assets.slice(0, 3).map((asset) => (
+              <AssetRow key={asset.id} asset={asset} onPress={() => router.push(`/asset/${asset.id}`)} />
+            ))
+          )}
+        </View>
       </View>
 
-      <Button
-        variant="secondary"
-        label="Cikis (mock)"
-        onPress={() => {
-          signOut();
-          router.replace("/(auth)/login");
-        }}
-      />
+      <View style={{ marginTop: spacing.xl }}>
+        <Button
+          variant="secondary"
+          label="Çıkış Yap (Mock)"
+          onPress={() => {
+            signOut();
+            router.replace("/(auth)/login");
+          }}
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  headerWrap: {
+    marginBottom: spacing.xs
+  },
   grid: {
     gap: spacing.md
   },
@@ -66,7 +83,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.sm
+    marginBottom: spacing.md
   },
   sectionTitle: {
     fontSize: typography.h3,
@@ -74,9 +91,20 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   count: {
-    color: colors.textSecondary
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+    fontWeight: "600"
   },
   listWrap: {
-    gap: spacing.md
+    gap: spacing.xs
+  },
+  listContainer: {
+    gap: spacing.sm
+  },
+  emptyText: {
+    color: colors.textSecondary,
+    fontSize: typography.body,
+    textAlign: "center",
+    paddingVertical: spacing.lg
   }
 });

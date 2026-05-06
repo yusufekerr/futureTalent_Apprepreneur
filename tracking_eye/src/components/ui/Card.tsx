@@ -1,9 +1,17 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 
-import { colors, radius, spacing } from "@/design/tokens";
+import { colors, radius, shadows, spacing } from "@/design/tokens";
 
-export function Card({ children }: { children: React.ReactNode }) {
-  return <View style={styles.card}>{children}</View>;
+interface CardProps extends ViewProps {
+  children: React.ReactNode;
+}
+
+export function Card({ children, style, ...props }: CardProps) {
+  return (
+    <View style={[styles.card, style]} {...props}>
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -12,6 +20,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: spacing.lg
+    padding: spacing.lg,
+    ...shadows.sm
   }
 });

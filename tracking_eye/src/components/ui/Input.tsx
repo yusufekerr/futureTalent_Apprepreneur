@@ -39,15 +39,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.caption,
     color: colors.textSecondary,
-    fontWeight: "600"
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   input: {
-    minHeight: 46,
+    minHeight: 52,
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.surface,
-    color: colors.textPrimary
+    backgroundColor: "rgba(0,0,0,0.2)",
+    color: colors.textPrimary,
+    fontSize: typography.body
   }
 });

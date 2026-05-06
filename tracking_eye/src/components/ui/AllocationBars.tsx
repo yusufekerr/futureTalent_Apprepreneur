@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "@/design/tokens";
-import { formatCurrency } from "@/utils/portfolio";
+import { formatCurrency, getTypeColor } from "@/utils/portfolio";
 
 type AllocationItem = {
   id: string;
@@ -21,15 +21,23 @@ export function AllocationBars({ items }: { items: AllocationItem[] }) {
       {items.map((item) => (
         <View key={item.id} style={styles.item}>
           <View style={styles.top}>
-            <Text style={styles.label}>
-              {item.label} · {item.type}
-            </Text>
+            <View style={styles.labelWrap}>
+              <View style={[styles.dot, { backgroundColor: getTypeColor(item.type) }]} />
+              <Text style={styles.label}>
+                {item.label} · <Text style={{ textTransform: "capitalize" }}>{item.type}</Text>
+              </Text>
+            </View>
             <Text style={styles.value}>
               {item.ratio.toFixed(1)}% · {formatCurrency(item.value)}
             </Text>
           </View>
           <View style={styles.track}>
-            <View style={[styles.fill, { width: `${Math.max(3, item.ratio)}%` }]} />
+            <View 
+              style={[
+                styles.fill, 
+                { width: `${Math.max(2, item.ratio)}%`, backgroundColor: getTypeColor(item.type) }
+              ]} 
+            />
           </View>
         </View>
       ))}
@@ -39,37 +47,50 @@ export function AllocationBars({ items }: { items: AllocationItem[] }) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.md
+    gap: spacing.lg
   },
   item: {
-    gap: spacing.xs
+    gap: spacing.sm
   },
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: spacing.sm
+    alignItems: "center"
+  },
+  labelWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4
   },
   label: {
-    fontSize: typography.caption,
+    fontSize: typography.body,
     color: colors.textSecondary,
     fontWeight: "600"
   },
   value: {
     fontSize: typography.caption,
-    color: colors.textPrimary
+    color: colors.textPrimary,
+    fontWeight: "700"
   },
   track: {
-    height: 10,
-    backgroundColor: colors.primarySoft,
-    borderRadius: radius.sm,
+    height: 8,
+    backgroundColor: colors.surfaceHighlight,
+    borderRadius: radius.full,
     overflow: "hidden"
   },
   fill: {
     height: "100%",
-    backgroundColor: colors.primary
+    borderRadius: radius.full
   },
   empty: {
     color: colors.textSecondary,
-    fontSize: typography.body
+    fontSize: typography.body,
+    textAlign: "center",
+    paddingVertical: spacing.lg
   }
 });

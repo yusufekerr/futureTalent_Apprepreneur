@@ -13,18 +13,22 @@ export default function PortfolioScreen() {
 
   return (
     <Screen>
-      <SectionHeader title="Portfoy Detayi" subtitle="Tum varliklarini tek bir listede gor." />
+      <View style={styles.headerWrap}>
+        <SectionHeader title="Portföy Detayı" subtitle="Tüm varlıklarınızı tek bir listede görün." />
+      </View>
 
       {assets.length === 0 ? (
         <Card>
-          <Text style={styles.empty}>Henuz varlik eklemedin.</Text>
+          <Text style={styles.empty}>Henüz varlık eklemediniz.</Text>
         </Card>
       ) : (
-        <View style={styles.list}>
-          <Text style={styles.heading}>{assets.length} varlik bulundu</Text>
-          {assets.map((asset) => (
-            <AssetRow key={asset.id} asset={asset} onPress={() => router.push(`/asset/${asset.id}`)} />
-          ))}
+        <View style={styles.listWrap}>
+          <Text style={styles.heading}>{assets.length} varlık bulundu</Text>
+          <View style={styles.list}>
+            {assets.map((asset) => (
+              <AssetRow key={asset.id} asset={asset} onPress={() => router.push(`/asset/${asset.id}`)} />
+            ))}
+          </View>
         </View>
       )}
     </Screen>
@@ -32,14 +36,26 @@ export default function PortfolioScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerWrap: {
+    marginBottom: spacing.xs
+  },
+  listWrap: {
+    gap: spacing.sm
+  },
   list: {
-    gap: spacing.md
+    gap: spacing.sm
   },
   heading: {
-    fontSize: typography.body,
-    color: colors.textSecondary
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   empty: {
-    color: colors.textSecondary
+    color: colors.textSecondary,
+    fontSize: typography.body,
+    textAlign: "center",
+    paddingVertical: spacing.lg
   }
 });
