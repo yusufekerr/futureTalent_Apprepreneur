@@ -1,8 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 
-import { colors, typography } from "@/design/tokens";
+import { colors, typography, shadows, radius } from "@/design/tokens";
 
 export default function TabsLayout() {
   return (
@@ -10,20 +10,21 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textMuted,
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarShowLabel: false, // Cleaner look without text, just icons
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          elevation: 0,
-          height: Platform.OS === "ios" ? 88 : 68,
-          paddingBottom: Platform.OS === "ios" ? 28 : 12,
-          paddingTop: 12
-        },
-        tabBarLabelStyle: {
-          fontSize: typography.caption,
-          fontWeight: "600",
-          marginTop: 4
+          position: "absolute", // Floating effect
+          bottom: Platform.OS === "ios" ? 32 : 24,
+          left: 24,
+          right: 24,
+          backgroundColor: colors.glassBg,
+          borderTopWidth: 0,
+          borderWidth: 1,
+          borderColor: colors.border,
+          elevation: 10,
+          height: 64,
+          borderRadius: radius.full,
+          ...shadows.md
         }
       }}
     >
@@ -31,17 +32,10 @@ export default function TabsLayout() {
         name="dashboard" 
         options={{ 
           title: "Özet",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="pie-chart" size={size} color={color} />
-          )
-        }} 
-      />
-      <Tabs.Screen 
-        name="portfolio" 
-        options={{ 
-          title: "Portföy",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="wallet" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconFocused]}>
+              <Feather name="pie-chart" size={size} color={color} />
+            </View>
           )
         }} 
       />
@@ -50,10 +44,43 @@ export default function TabsLayout() {
         options={{ 
           title: "Ekle",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={size + 4} color={color} />
+            <View style={styles.addWrap}>
+              <Feather name="plus" size={size + 6} color="#FFFFFF" />
+            </View>
+          )
+        }} 
+      />
+      <Tabs.Screen 
+        name="portfolio" 
+        options={{ 
+          title: "Portföy",
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={[styles.iconWrap, focused && styles.iconFocused]}>
+              <Feather name="briefcase" size={size} color={color} />
+            </View>
           )
         }} 
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrap: {
+    padding: 8,
+    borderRadius: radius.full,
+  },
+  iconFocused: {
+    backgroundColor: colors.primarySoft,
+  },
+  addWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24, // Pop out slightly
+    ...shadows.glow
+  }
+});

@@ -50,7 +50,7 @@ export function MetricCard({
   if (gradient) {
     return (
       <LinearGradient
-        colors={["#3B82F6", "#8B5CF6"]}
+        colors={[colors.primary, colors.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.gradientCard, shadows.glow]}

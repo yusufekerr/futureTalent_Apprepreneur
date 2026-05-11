@@ -1,16 +1,18 @@
 export const colors = {
-  bg: "#0B1120", // Çok koyu mavi/siyah arka plan
-  surface: "#1E293B", // Kartlar için biraz daha açık arka plan
-  surfaceHighlight: "#334155", // Hover/Press durumları için
-  textPrimary: "#F8FAFC", // Beyaza yakın parlak metin
-  textSecondary: "#94A3B8", // Gri yardımcı metin
-  textMuted: "#64748B", // Çok sönük metin
-  border: "rgba(255, 255, 255, 0.08)", // Yarı saydam ince kenarlık
-  primary: "#3B82F6", // Canlı mavi (Accent)
-  primarySoft: "rgba(59, 130, 246, 0.15)", // Yarı saydam mavi
-  success: "#10B981", // Canlı neon yeşil
-  danger: "#EF4444", // Canlı kırmızı
-  warning: "#F59E0B"
+  bg: "#050B14", // Deeper, more luxurious dark blue/black
+  surface: "#0F172A", // Richer surface color
+  surfaceHighlight: "#1E293B", // Softer highlight
+  textPrimary: "#F8FAFC", 
+  textSecondary: "#94A3B8", 
+  textMuted: "#475569", 
+  border: "rgba(255, 255, 255, 0.05)", // More subtle border
+  primary: "#3B82F6", // Vibrant accent
+  primarySoft: "rgba(59, 130, 246, 0.15)",
+  secondary: "#8B5CF6", // Purple accent for gradients
+  success: "#10B981", 
+  danger: "#EF4444", 
+  warning: "#F59E0B",
+  glassBg: "rgba(15, 23, 42, 0.8)", // Glassmorphism base
 };
 
 export const spacing = {

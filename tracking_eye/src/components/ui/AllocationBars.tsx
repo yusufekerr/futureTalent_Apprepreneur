@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 
 import { colors, radius, spacing, typography } from "@/design/tokens";
 import { formatCurrency, getTypeColor } from "@/utils/portfolio";
@@ -10,6 +11,33 @@ type AllocationItem = {
   value: number;
   ratio: number;
 };
+
+function AnimatedBar({ ratio, color }: { ratio: number; color: string }) {
+  const animatedWidth = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedWidth, {
+      toValue: Math.max(2, ratio), // Minimum %2 width to show color
+      duration: 800,
+      useNativeDriver: false // Width animation doesn't support native driver
+    }).start();
+  }, [ratio, animatedWidth]);
+
+  return (
+    <Animated.View
+      style={[
+        styles.fill,
+        {
+          backgroundColor: color,
+          width: animatedWidth.interpolate({
+            inputRange: [0, 100],
+            outputRange: ["0%", "100%"]
+          })
+        }
+      ]}
+    />
+  );
+}
 
 export function AllocationBars({ items }: { items: AllocationItem[] }) {
   if (!items.length) {
@@ -32,12 +60,7 @@ export function AllocationBars({ items }: { items: AllocationItem[] }) {
             </Text>
           </View>
           <View style={styles.track}>
-            <View 
-              style={[
-                styles.fill, 
-                { width: `${Math.max(2, item.ratio)}%`, backgroundColor: getTypeColor(item.type) }
-              ]} 
-            />
+            <AnimatedBar ratio={item.ratio} color={getTypeColor(item.type)} />
           </View>
         </View>
       ))}

@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.1.0",
     "@supabase/supabase-js": "^2.49.4",
     "expo": "^53.0.7",
     "expo-asset": "~11.1.7",

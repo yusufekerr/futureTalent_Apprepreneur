@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.xl,
+    paddingBottom: 120, // Extra padding for floating tab bar
     gap: spacing.lg
   }
 });
