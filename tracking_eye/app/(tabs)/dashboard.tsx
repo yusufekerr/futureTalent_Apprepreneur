@@ -55,10 +55,27 @@ export default function DashboardScreen() {
 
       {/* QUICK ACTIONS */}
       <View style={styles.actionsRow}>
-        <ActionButton icon="arrow-down" label="Yatır" color={colors.primary} />
-        <ActionButton icon="arrow-up" label="Çek" color={colors.primary} />
-        <ActionButton icon="swap-horizontal" label="Takas" color={colors.secondary} />
-        <ActionButton icon="dots-horizontal" label="Daha Fazla" color={colors.textSecondary} />
+        <ActionButton 
+          icon="plus" 
+          label="Yeni Varlık" 
+          color={colors.primary} 
+          onPress={() => router.push("/(tabs)/add-asset")}
+        />
+        <ActionButton 
+          icon="chart-pie" 
+          label="Analiz" 
+          color={colors.secondary} 
+        />
+        <ActionButton 
+          icon="history" 
+          label="Geçmiş" 
+          color={colors.textSecondary} 
+        />
+        <ActionButton 
+          icon="bell-ring-outline" 
+          label="Alarmlar" 
+          color={colors.textSecondary} 
+        />
       </View>
 
       {/* ALLOCATION */}
@@ -102,9 +119,9 @@ export default function DashboardScreen() {
   );
 }
 
-function ActionButton({ icon, label, color }: { icon: any, label: string, color: string }) {
+function ActionButton({ icon, label, color, onPress }: { icon: any, label: string, color: string, onPress?: () => void }) {
   return (
-    <TouchableOpacity style={styles.actionItem}>
+    <TouchableOpacity style={styles.actionItem} onPress={onPress}>
       <View style={[styles.actionIconWrap, { backgroundColor: color === colors.primary ? colors.textPrimary : colors.surface }]}>
         <MaterialCommunityIcons name={icon} size={24} color={color === colors.primary ? "#FFFFFF" : color} />
       </View>
