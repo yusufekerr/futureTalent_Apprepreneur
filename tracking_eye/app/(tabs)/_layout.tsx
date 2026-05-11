@@ -32,9 +32,9 @@ export default function TabsLayout() {
         name="dashboard" 
         options={{ 
           title: "Özet",
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-              <Feather name="pie-chart" size={size} color={color} />
+              <Feather name="pie-chart" size={24} color={color} />
             </View>
           )
         }} 
@@ -43,9 +43,9 @@ export default function TabsLayout() {
         name="add-asset" 
         options={{ 
           title: "Ekle",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <View style={styles.addWrap}>
-              <Feather name="plus" size={size + 6} color="#FFFFFF" />
+              <Feather name="plus" size={28} color="#FFFFFF" />
             </View>
           )
         }} 
@@ -54,9 +54,9 @@ export default function TabsLayout() {
         name="portfolio" 
         options={{ 
           title: "Portföy",
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-              <Feather name="briefcase" size={size} color={color} />
+              <Feather name="briefcase" size={24} color={color} />
             </View>
           )
         }} 

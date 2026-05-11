@@ -12,7 +12,7 @@ type ScreenProps = {
 export function Screen({ children, scroll = true }: ScreenProps) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       {scroll ? (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           {children}

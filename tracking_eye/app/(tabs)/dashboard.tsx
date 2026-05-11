@@ -18,7 +18,7 @@ export default function DashboardScreen() {
   return (
     <Screen>
       <View style={styles.headerWrap}>
-        <SectionHeader title="TrackingEye" subtitle="Portföyünüzün genel özeti" />
+        <SectionHeader title="İyi Günler, Yusuf" subtitle="Portföyünün güncel durumu." />
       </View>
 
       <View style={styles.grid}>
