@@ -1,6 +1,6 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
 import { useMemo, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -16,6 +16,8 @@ export default function AssetDetailScreen() {
   const { assets, removeAsset, updatePrice } = usePortfolio();
   const asset = useMemo(() => assets.find((item) => item.id === id), [assets, id]);
   const [nextPrice, setNextPrice] = useState(asset ? String(asset.currentPrice) : "");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!asset) {
     return (
@@ -28,6 +30,27 @@ export default function AssetDetailScreen() {
   }
 
   const pnl = getAssetPnL(asset);
+
+  const handleUpdatePrice = async () => {
+    setError("");
+    setLoading(true);
+    const result = await updatePrice(asset.id, Number(nextPrice));
+    setLoading(false);
+    if (result.error) setError(result.error);
+  };
+
+  const handleRemove = async () => {
+    setError("");
+    setLoading(true);
+    const result = await removeAsset(asset.id);
+    setLoading(false);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      router.replace("/(tabs)/portfolio");
+    }
+  };
+
   return (
     <Screen>
       <SectionHeader title={`${asset.name} Detayi`} subtitle={`${asset.type} · ${asset.quantity} adet`} />
@@ -44,20 +67,18 @@ export default function AssetDetailScreen() {
         <View style={styles.stats}>
           <Input label="Guncel Fiyat" value={nextPrice} onChangeText={setNextPrice} keyboardType="numeric" />
           <Button
-            label="Fiyati Guncelle"
-            onPress={() => {
-              updatePrice(asset.id, Number(nextPrice));
-            }}
+            label={loading ? "Güncelleniyor..." : "Fiyati Guncelle"}
+            disabled={loading}
+            onPress={handleUpdatePrice}
           />
         </View>
       </Card>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <Button
         variant="danger"
-        label="Varligi Sil"
-        onPress={() => {
-          removeAsset(asset.id);
-          router.replace("/(tabs)/portfolio");
-        }}
+        label={loading ? "Siliniyor..." : "Varligi Sil"}
+        disabled={loading}
+        onPress={handleRemove}
       />
     </Screen>
   );
@@ -69,5 +90,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.textPrimary
+  },
+  errorText: {
+    color: colors.danger,
+    fontWeight: "600",
+    textAlign: "center"
   }
 });

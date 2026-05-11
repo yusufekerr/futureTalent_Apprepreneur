@@ -20,10 +20,39 @@ export default function AddAssetScreen() {
   const [buyPrice, setBuyPrice] = useState("");
   const [currentPrice, setCurrentPrice] = useState("");
   const [done, setDone] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(() => {
     return Boolean(name.trim() && Number(quantity) > 0 && Number(buyPrice) >= 0 && Number(currentPrice) >= 0);
   }, [buyPrice, currentPrice, name, quantity]);
+
+  const handleSubmit = async () => {
+    setError("");
+    setDone("");
+    setLoading(true);
+
+    const result = await addAsset({
+      name: name.trim().toUpperCase(),
+      type,
+      quantity: Number(quantity),
+      buyPrice: Number(buyPrice),
+      currentPrice: Number(currentPrice)
+    });
+
+    setLoading(false);
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setName("");
+      setQuantity("");
+      setBuyPrice("");
+      setCurrentPrice("");
+      setDone("Varlık başarıyla eklendi.");
+      setTimeout(() => setDone(""), 3000);
+    }
+  };
 
   return (
     <Screen>
@@ -67,26 +96,13 @@ export default function AddAssetScreen() {
 
           <View style={styles.submitWrap}>
             <Button
-              label="Portföye Ekle"
-              disabled={!canSubmit}
-              onPress={() => {
-                addAsset({
-                  name: name.trim().toUpperCase(),
-                  type,
-                  quantity: Number(quantity),
-                  buyPrice: Number(buyPrice),
-                  currentPrice: Number(currentPrice)
-                });
-                setName("");
-                setQuantity("");
-                setBuyPrice("");
-                setCurrentPrice("");
-                setDone("Varlık başarıyla eklendi.");
-                setTimeout(() => setDone(""), 3000);
-              }}
+              label={loading ? "Ekleniyor..." : "Portföye Ekle"}
+              disabled={!canSubmit || loading}
+              onPress={handleSubmit}
             />
           </View>
           {done ? <Text style={styles.done}>{done}</Text> : null}
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
       </Card>
     </Screen>
@@ -125,5 +141,11 @@ const styles = StyleSheet.create({
     color: colors.success,
     fontWeight: "600",
     textAlign: "center"
+  },
+  errorText: {
+    color: colors.danger,
+    fontWeight: "600",
+    textAlign: "center",
+    fontSize: typography.caption
   }
 });

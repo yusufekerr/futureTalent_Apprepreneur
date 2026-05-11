@@ -1,19 +1,37 @@
 import { Link, router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { usePortfolio } from "@/context/PortfolioContext";
+import { useAuth } from "@/context/AuthContext";
 import { colors, spacing, typography } from "@/design/tokens";
 
 export default function LoginScreen() {
-  const { signIn } = usePortfolio();
-  const [email, setEmail] = useState("demo@trackingeye.app");
-  const [password, setPassword] = useState("123456");
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setError("");
+    if (!email.trim() || !password) {
+      setError("E-posta ve şifre alanları zorunludur.");
+      return;
+    }
+    setLoading(true);
+    const result = await signIn(email.trim(), password);
+    setLoading(false);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      router.replace("/(tabs)/dashboard");
+    }
+  };
 
   return (
     <Screen>
@@ -27,14 +45,15 @@ export default function LoginScreen() {
             placeholder="mail@ornek.com"
             keyboardType="email-address"
           />
-          <Input label="Sifre" value={password} onChangeText={setPassword} placeholder="******" />
-          <Button
-            label="Giris Yap"
-            onPress={() => {
-              signIn();
-              router.replace("/(tabs)/dashboard");
-            }}
+          <Input
+            label="Sifre"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="******"
+            secureTextEntry
           />
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Button label={loading ? "Giriş yapılıyor..." : "Giris Yap"} disabled={loading} onPress={handleLogin} />
         </View>
       </Card>
       <Text style={styles.helper}>
@@ -51,5 +70,11 @@ const styles = StyleSheet.create({
   helper: {
     color: colors.textSecondary,
     fontSize: typography.body
+  },
+  error: {
+    color: colors.danger,
+    fontSize: typography.caption,
+    fontWeight: "600",
+    textAlign: "center"
   }
 });

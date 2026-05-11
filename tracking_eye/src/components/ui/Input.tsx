@@ -8,6 +8,7 @@ type InputProps = {
   onChangeText: (value: string) => void;
   placeholder?: string;
   keyboardType?: "default" | "email-address" | "numeric";
+  secureTextEntry?: boolean;
 };
 
 export function Input({
@@ -15,7 +16,8 @@ export function Input({
   value,
   onChangeText,
   placeholder,
-  keyboardType = "default"
+  keyboardType = "default",
+  secureTextEntry = false
 }: InputProps) {
   return (
     <View style={styles.group}>
@@ -27,6 +29,7 @@ export function Input({
         placeholderTextColor={colors.textMuted}
         style={styles.input}
         keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
       />
     </View>
   );

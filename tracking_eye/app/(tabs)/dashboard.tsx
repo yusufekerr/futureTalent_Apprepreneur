@@ -1,20 +1,24 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 import { AllocationBars } from "@/components/ui/AllocationBars";
 import { AssetRow } from "@/components/ui/AssetRow";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
+import { useAuth } from "@/context/AuthContext";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, radius, shadows, spacing, typography } from "@/design/tokens";
 import { formatCurrency, formatPercent } from "@/utils/portfolio";
 
 export default function DashboardScreen() {
-  const { assets, distribution, metrics, signOut } = usePortfolio();
+  const { assets, distribution, metrics, isLoading, error } = usePortfolio();
+  const { signOut, user } = useAuth();
 
   const isPositive = metrics.totalPnL >= 0;
+
+  const displayEmail = user?.email ?? "Kullanıcı";
 
   return (
     <Screen>
@@ -22,12 +26,12 @@ export default function DashboardScreen() {
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
           <Image 
-            source={{ uri: "https://i.pravatar.cc/150?u=yusuf" }} 
+            source={{ uri: `https://i.pravatar.cc/150?u=${displayEmail}` }} 
             style={styles.avatar} 
           />
           <View>
             <Text style={styles.greeting}>Günaydın,</Text>
-            <Text style={styles.name}>Yusuf Eker</Text>
+            <Text style={styles.name} numberOfLines={1}>{displayEmail}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.iconButton}>
@@ -95,7 +99,11 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.listContainer}>
-          {assets.length === 0 ? (
+          {isLoading ? (
+            <ActivityIndicator size="small" color={colors.primary} style={{ paddingVertical: spacing.lg }} />
+          ) : error ? (
+            <Text style={styles.emptyText}>{error}</Text>
+          ) : assets.length === 0 ? (
             <Text style={styles.emptyText}>Henüz varlık eklenmedi.</Text>
           ) : (
             assets.slice(0, 3).map((asset) => (
@@ -109,8 +117,8 @@ export default function DashboardScreen() {
         <Button
           variant="secondary"
           label="Hesaptan Çıkış Yap"
-          onPress={() => {
-            signOut();
+          onPress={async () => {
+            await signOut();
             router.replace("/(auth)/login");
           }}
         />
@@ -141,6 +149,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
+    flex: 1,
+    marginRight: spacing.sm,
   },
   avatar: {
     width: 48,
