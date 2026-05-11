@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { Platform, View, StyleSheet } from "react-native";
 
@@ -10,21 +10,25 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarShowLabel: false, // Cleaner look without text, just icons
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+          marginBottom: Platform.OS === "ios" ? 0 : 8
+        },
         tabBarStyle: {
-          position: "absolute", // Floating effect
-          bottom: Platform.OS === "ios" ? 32 : 24,
-          left: 24,
-          right: 24,
-          backgroundColor: colors.glassBg,
-          borderTopWidth: 0,
-          borderWidth: 1,
-          borderColor: colors.border,
+          backgroundColor: colors.surface,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          height: Platform.OS === "ios" ? 90 : 70,
+          paddingTop: 8,
+          paddingBottom: Platform.OS === "ios" ? 28 : 8,
           elevation: 10,
-          height: 64,
-          borderRadius: radius.full,
-          ...shadows.md
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 10,
         }
       }}
     >
@@ -33,9 +37,7 @@ export default function TabsLayout() {
         options={{ 
           title: "Özet",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-              <Feather name="pie-chart" size={24} color={color} />
-            </View>
+            <MaterialCommunityIcons name={focused ? "home-variant" : "home-variant-outline"} size={28} color={color} />
           )
         }} 
       />
@@ -43,9 +45,9 @@ export default function TabsLayout() {
         name="add-asset" 
         options={{ 
           title: "Ekle",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <View style={styles.addWrap}>
-              <Feather name="plus" size={28} color="#FFFFFF" />
+              <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
             </View>
           )
         }} 
@@ -55,9 +57,7 @@ export default function TabsLayout() {
         options={{ 
           title: "Portföy",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-              <Feather name="briefcase" size={24} color={color} />
-            </View>
+            <MaterialCommunityIcons name={focused ? "briefcase" : "briefcase-outline"} size={28} color={color} />
           )
         }} 
       />
@@ -66,21 +66,16 @@ export default function TabsLayout() {
 }
 
 const styles = StyleSheet.create({
-  iconWrap: {
-    padding: 8,
-    borderRadius: radius.full,
-  },
-  iconFocused: {
-    backgroundColor: colors.primarySoft,
-  },
   addWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24, // Pop out slightly
+    marginBottom: Platform.OS === "ios" ? 20 : 30, // Pops out of the bar
+    borderWidth: 4,
+    borderColor: colors.bg, // Matches background to look like a cutout
     ...shadows.glow
   }
 });

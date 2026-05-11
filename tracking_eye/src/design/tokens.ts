@@ -1,18 +1,18 @@
 export const colors = {
-  bg: "#F8FAFC", // Premium off-white background
-  surface: "#FFFFFF", // Pure white for cards and floating items
-  surfaceHighlight: "#F1F5F9", // Soft gray for active states
-  textPrimary: "#0F172A", // Deep slate for high contrast text
-  textSecondary: "#475569", // Gray for secondary text
-  textMuted: "#94A3B8", // Lighter gray for muted text
-  border: "rgba(0, 0, 0, 0.06)", // Very subtle dark border
-  primary: "#2563EB", // Vibrant blue accent
-  primarySoft: "rgba(37, 99, 235, 0.1)", // Light blue tint
-  secondary: "#7C3AED", // Vibrant purple accent
+  bg: "#F2F4F7", // Very light gray/blue background (Neobank style)
+  surface: "#FFFFFF", 
+  surfaceHighlight: "#F8FAFC", 
+  textPrimary: "#111827", // Almost black for extreme readability
+  textSecondary: "#6B7280", 
+  textMuted: "#9CA3AF", 
+  border: "#E5E7EB", // Solid light gray border
+  primary: "#000000", // Black primary buttons (super premium)
+  primarySoft: "rgba(0, 0, 0, 0.05)",
+  secondary: "#3B82F6", // Bright blue accent for links/highlights
   success: "#10B981", 
   danger: "#EF4444", 
   warning: "#F59E0B",
-  glassBg: "rgba(255, 255, 255, 0.9)", // Glassmorphism light base
+  glassBg: "rgba(255, 255, 255, 0.95)", 
 };
 
 export const spacing = {
