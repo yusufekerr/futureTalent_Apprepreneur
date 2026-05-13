@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import type { Database } from "@/types/database.types";
 import type { Asset, AssetDraft } from "@/types/portfolio";
 import { getDistribution, getPortfolioMetrics } from "@/utils/portfolio";
 
@@ -9,15 +10,17 @@ import { getDistribution, getPortfolioMetrics } from "@/utils/portfolio";
 /*  DB row → App model mapping                                        */
 /* ------------------------------------------------------------------ */
 
-function mapRow(row: Record<string, unknown>): Asset {
+type AssetRow = Database["public"]["Tables"]["assets"]["Row"];
+
+function mapRow(row: AssetRow): Asset {
   return {
-    id: row.id as string,
-    name: row.name as string,
-    type: row.type as Asset["type"],
+    id: row.id,
+    name: row.name,
+    type: row.type,
     quantity: Number(row.quantity),
     buyPrice: Number(row.buy_price),
     currentPrice: Number(row.current_price),
-    updatedAt: row.created_at as string
+    updatedAt: row.updated_at
   };
 }
 
