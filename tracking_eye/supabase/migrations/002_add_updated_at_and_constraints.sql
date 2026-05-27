@@ -6,11 +6,15 @@ alter table public.assets
   add column if not exists updated_at timestamptz not null default timezone('utc', now());
 
 -- 3. update işlemlerinde updated_at sütununu otomatik güncelleyen trigger'ı oluştur
+drop trigger if exists handle_updated_at on public.assets;
 create trigger handle_updated_at
   before update on public.assets
   for each row
   execute procedure moddatetime(updated_at);
 
 -- 4. type sütununa CHECK kısıtlaması ekle (Sadece izin verilen tipler)
+alter table public.assets
+  drop constraint if exists assets_type_check;
+
 alter table public.assets
   add constraint assets_type_check check (type in ('Hisse', 'Kripto', 'Emtia', 'Fon', 'Döviz'));

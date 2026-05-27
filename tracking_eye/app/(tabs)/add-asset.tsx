@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, spacing, typography } from "@/design/tokens";
 import type { AssetType } from "@/types/portfolio";
+import { toPositiveNumber } from "@/utils/number";
 
 const assetTypeOptions: AssetType[] = ["Hisse", "Kripto", "Emtia", "Fon", "Döviz"];
 
@@ -24,20 +25,47 @@ export default function AddAssetScreen() {
   const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(() => {
-    return Boolean(name.trim() && Number(quantity) > 0 && Number(buyPrice) >= 0 && Number(currentPrice) >= 0);
+    const parsedQuantity = toPositiveNumber(quantity);
+    const parsedBuyPrice = toPositiveNumber(buyPrice);
+    const parsedCurrentPrice = toPositiveNumber(currentPrice);
+
+    return Boolean(
+      name.trim() &&
+        parsedQuantity !== null &&
+        parsedQuantity > 0 &&
+        parsedBuyPrice !== null &&
+        parsedCurrentPrice !== null
+    );
   }, [buyPrice, currentPrice, name, quantity]);
 
   const handleSubmit = async () => {
     setError("");
     setDone("");
+    const parsedQuantity = toPositiveNumber(quantity);
+    const parsedBuyPrice = toPositiveNumber(buyPrice);
+    const parsedCurrentPrice = toPositiveNumber(currentPrice);
+
+    if (!name.trim()) {
+      setError("Varlık adı zorunludur.");
+      return;
+    }
+    if (parsedQuantity === null || parsedQuantity <= 0) {
+      setError("Adet değeri 0'dan büyük bir sayı olmalıdır.");
+      return;
+    }
+    if (parsedBuyPrice === null || parsedCurrentPrice === null) {
+      setError("Fiyat alanları geçerli ve negatif olmayan sayı olmalıdır.");
+      return;
+    }
+
     setLoading(true);
 
     const result = await addAsset({
       name: name.trim().toUpperCase(),
       type,
-      quantity: Number(quantity),
-      buyPrice: Number(buyPrice),
-      currentPrice: Number(currentPrice)
+      quantity: parsedQuantity,
+      buyPrice: parsedBuyPrice,
+      currentPrice: parsedCurrentPrice
     });
 
     setLoading(false);

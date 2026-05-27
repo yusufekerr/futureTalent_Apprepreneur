@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { Platform, View, StyleSheet } from "react-native";
 
-import { colors, typography, shadows, radius } from "@/design/tokens";
+import { colors, shadows } from "@/design/tokens";
 
 export default function TabsLayout() {
   return (
@@ -45,7 +45,7 @@ export default function TabsLayout() {
         name="add-asset" 
         options={{ 
           title: "Ekle",
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: () => (
             <View style={styles.addWrap}>
               <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
             </View>

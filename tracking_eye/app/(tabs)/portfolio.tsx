@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { AssetRow } from "@/components/ui/AssetRow";
 import { Card } from "@/components/ui/Card";
@@ -9,7 +9,7 @@ import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, spacing, typography } from "@/design/tokens";
 
 export default function PortfolioScreen() {
-  const { assets } = usePortfolio();
+  const { assets, isLoading, error } = usePortfolio();
 
   return (
     <Screen>
@@ -17,7 +17,15 @@ export default function PortfolioScreen() {
         <SectionHeader title="Portföy Detayı" subtitle="Tüm varlıklarınızı tek bir listede görün." />
       </View>
 
-      {assets.length === 0 ? (
+      {isLoading ? (
+        <Card>
+          <ActivityIndicator color={colors.primary} style={styles.loading} />
+        </Card>
+      ) : error ? (
+        <Card>
+          <Text style={styles.error}>{error}</Text>
+        </Card>
+      ) : assets.length === 0 ? (
         <Card>
           <Text style={styles.empty}>Henüz varlık eklemediniz.</Text>
         </Card>
@@ -54,6 +62,15 @@ const styles = StyleSheet.create({
   },
   empty: {
     color: colors.textSecondary,
+    fontSize: typography.body,
+    textAlign: "center",
+    paddingVertical: spacing.lg
+  },
+  loading: {
+    paddingVertical: spacing.lg
+  },
+  error: {
+    color: colors.danger,
     fontSize: typography.body,
     textAlign: "center",
     paddingVertical: spacing.lg

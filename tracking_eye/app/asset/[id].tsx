@@ -9,6 +9,7 @@ import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, spacing } from "@/design/tokens";
+import { toPositiveNumber } from "@/utils/number";
 import { formatCurrency, getAssetCost, getAssetPnL, getAssetValue } from "@/utils/portfolio";
 
 export default function AssetDetailScreen() {
@@ -33,8 +34,13 @@ export default function AssetDetailScreen() {
 
   const handleUpdatePrice = async () => {
     setError("");
+    const parsedPrice = toPositiveNumber(nextPrice);
+    if (parsedPrice === null) {
+      setError("Geçerli ve negatif olmayan bir fiyat giriniz.");
+      return;
+    }
     setLoading(true);
-    const result = await updatePrice(asset.id, Number(nextPrice));
+    const result = await updatePrice(asset.id, parsedPrice);
     setLoading(false);
     if (result.error) setError(result.error);
   };

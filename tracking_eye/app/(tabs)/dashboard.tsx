@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import type { ComponentProps } from "react";
 import { ActivityIndicator, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 import { AllocationBars } from "@/components/ui/AllocationBars";
@@ -127,7 +128,19 @@ export default function DashboardScreen() {
   );
 }
 
-function ActionButton({ icon, label, color, onPress }: { icon: any, label: string, color: string, onPress?: () => void }) {
+type MaterialIconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
+
+function ActionButton({
+  icon,
+  label,
+  color,
+  onPress
+}: {
+  icon: MaterialIconName;
+  label: string;
+  color: string;
+  onPress?: () => void;
+}) {
   return (
     <TouchableOpacity style={styles.actionItem} onPress={onPress}>
       <View style={[styles.actionIconWrap, { backgroundColor: color === colors.primary ? colors.textPrimary : colors.surface }]}>
