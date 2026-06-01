@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFonts } from "expo-font";
 
 import { AuthProvider as RealAuthProvider } from "@/context/AuthContext";
 import { PortfolioProvider } from "@/context/PortfolioContext";
@@ -79,6 +80,14 @@ function AppContent() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    ...MaterialCommunityIcons.font,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <RealAuthProvider>
       <PortfolioProvider>
@@ -105,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     overflow: "hidden",
-    ...shadows.lg,
+    ...shadows.md,
   },
   alertHeader: {
     paddingVertical: spacing.lg,

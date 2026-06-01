@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
-    ...shadows.xs,
+    ...shadows.sm,
   },
   alertInfo: {
     flex: 1,

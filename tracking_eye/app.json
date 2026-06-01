@@ -13,7 +13,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      "expo-font"
     ],
     "scheme": "trackingeye",
     "extra": {
