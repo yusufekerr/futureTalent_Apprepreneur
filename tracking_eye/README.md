@@ -8,7 +8,7 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Surum: 1.0 (MVP)
 - Platform: iOS / Android (cross-platform)
 - Stack: Expo + TypeScript + Expo Router + Supabase
-- Guncel faz: **Faz 6 – Kalite** ✅ (Tamamlandı)
+- Guncel faz: **Faz 7 – MVP Sonrası ve Kalite Kontrolü** ✅ (Tamamlandı)
 
 ## Tamamlanan Asamalar
 
@@ -61,11 +61,11 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - ✅ PRD §8 kabul testleri (manuel)
 - ✅ iOS/Android smoke test
 
-### Faz 7 – MVP Sonrasi 📋 (Backlog)
+### Faz 7 – MVP Sonrası ✅ (Tamamlandı)
 
-- Otomatik fiyat verisi / market data
-- Fiyat alarmi ve bildirimler
-- Zaman icinde performans grafigi (US-5)
+- Otomatik fiyat verisi / market data (CoinGecko API ve simülasyon entegrasyonu)
+- Fiyat alarmı ve bildirimler (Supabase tetikleyicisi ve Alerts ekranı)
+- Zaman içinde performans grafiği (US-5 - Tarihsel portföy anlık görüntüsü)
 
 ## Veri Modeli (Ozet)
 

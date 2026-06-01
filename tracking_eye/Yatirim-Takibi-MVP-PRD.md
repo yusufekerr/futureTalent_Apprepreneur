@@ -3,9 +3,9 @@
 ## 1) Doküman Bilgileri
 - **Ürün Adı:** TrackingEye  
 - **Versiyon:** 1.0 (MVP)  
-- **Aşama:** Faz 6 – Kalite (MVP fonksiyonları tamamlandı)  
+- **Aşama:** Faz 7 – MVP Sonrası (Tüm fonksiyonlar ve kalite fazı tamamlandı)  
 - **Platform:** Mobile (iOS / Android, cross-platform)  
-- **Durum:** Uygulandı (MVP) — kalite fazı devam ediyor  
+- **Durum:** Uygulandı (MVP + MVP Sonrası Yol Haritası Özellikleri) — Yayına hazır  
 
 ## 2) Problem Tanımı
 Yatırıma yeni başlayan kullanıcılar, yatırımlarını düzenli takip etmekte ve alışkanlık geliştirmekte zorlanmaktadır. Kullanıcılar; varlıklarını tek bir yerde kaydetmek, toplam birikimlerini görmek, kâr/zarar durumunu izlemek ve portföy dağılımını anlamak istemektedir.
@@ -152,4 +152,4 @@ Kullanıcı hesapları Supabase Auth tarafından yönetilir. Uygulama şemasınd
 | DB migration + RLS | ✅ Uygulandı (001–003) |
 | Birim testler (hesaplama) | ✅ Uygulandı |
 | Manuel kabul + platform smoke | ✅ Uygulandı (`FAZ6_KALITE_CHECKLIST.md`) |
-| US-5 / otomatik fiyat / bildirimler | 📋 Backlog |
+| US-5 / otomatik fiyat / bildirimler | ✅ Uygulandı (004–005) |
