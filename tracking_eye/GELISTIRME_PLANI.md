@@ -1,17 +1,18 @@
 # TrackingEye MVP – Geliştirme Planı
 
-Bu dosya, [README.md](README.md) ve [Yatirim-Takibi-MVP-PRD.md](Yatirim-Takibi-MVP-PRD.md) belgelerine dayanır. Ürün gereksinimlerinin tek kaynağı PRD'dir; uygulama kodu bu plandan bağımsız olarak, onay sonrası ayrı bir geliştirme turunda ele alınmalıdır.
+Bu dosya, [README.md](README.md) ve [Yatirim-Takibi-MVP-PRD.md](Yatirim-Takibi-MVP-PRD.md) belgelerine dayanır. Ürün gereksinimlerinin tek kaynağı PRD'dir.
 
 ## Kaynak belgeler
 
 - Ürün özeti ve doküman indeksi: `README.md`
 - Ayrıntılı gereksinimler ve kabul kriterleri: `Yatirim-Takibi-MVP-PRD.md`
+- Faz 6 kalite checklist: `FAZ6_KALITE_CHECKLIST.md`
 
-**Not:** Depoda `PRD.md` adı kullanılmıyor; PRD içeriği `Yatirim-Takibi-MVP-PRD.md` dosyasında. İstenirse ileride `PRD.md` yalnızca yönlendirme (kısa link) olarak eklenebilir.
+**Not:** Depoda `PRD.md` adı kullanılmıyor; PRD içeriği `Yatirim-Takibi-MVP-PRD.md` dosyasında.
 
 ## MVP kapsamı (PRD ile hizalama)
 
-**Kapsamda:** Login/Register, varlık ekleme (ad, tür, adet, alış fiyatı, güncel fiyat), dashboard'da toplam değer ve kâr/zarar, portföy detay, varlık dağılım grafiği (pasta veya sütun).
+**Kapsamda:** Login/Register, varlık ekleme (ad, tür, adet, alış fiyatı, güncel fiyat), dashboard'da toplam değer ve kâr/zarar, portföy detay, varlık dağılım grafiği (pasta veya sütun), varlık silme ve manuel fiyat güncelleme.
 
 **Kapsam dışı:** Broker entegrasyonu, web sürümü, gelişmiş analiz, sosyal özellikler, gelişmiş bildirim motoru.
 
@@ -28,30 +29,43 @@ flowchart LR
     State[StateCache]
   end
   subgraph backend [BackendAsService]
-    Auth[Auth]
-    DB[(User_Asset_Tables)]
+    Auth[Supabase_Auth_auth_users]
+    DB[(public_assets)]
   end
   UI --> Auth
   UI --> DB
   State --> UI
 ```
 
-**Seçenek A (hızlı MVP):** Expo (React Native) + TypeScript, Expo Router, form doğrulama (ör. Zod), grafik (ör. Victory Native veya react-native-chart-kit), backend olarak **Supabase** veya **Firebase** (kimlik doğrulama + veritabanı, satır bazlı güvenlik kuralları / RLS).
-
-**Seçenek B:** Flutter + Dart ve benzeri BaaS veya ince bir REST API.
-
-**Öneri:** MVP için **Expo + TypeScript + Supabase** (alternatif: Firebase). Bu kombinasyon; tek kod tabanıyla iOS/Android çıkışı, hızlı auth entegrasyonu ve PRD'deki `User` / `Asset` modelini doğrudan tablo bazlı kurgulama avantajı sağlar. NFR-3 (güvenli saklama) için sunucu tarafı RLS veya eşdeğeri policy uygulanmalıdır.
+**Seçilen yaklaşım:** MVP için **Expo + TypeScript + Supabase**. Tek kod tabanıyla iOS/Android çıkışı, hızlı auth entegrasyonu ve PRD'deki `Asset` modelinin doğrudan tablo bazlı kurgulanması. NFR-3 (güvenli saklama) için sunucu tarafı RLS policy uygulanmıştır.
 
 ## Veri modeli ve iş kuralları (PRD §12)
 
-- **User:** `id`, `email`, `password_hash` (BaaS kullanılıyorsa parola hash'i sağlayıcı tarafından yönetilir), `created_at`.
-- **Asset:** `user_id`, `name`, `type`, `quantity`, `buy_price`, `current_price`, `created_at`.
+### User (Supabase Auth)
+
+Kullanıcı hesapları **`auth.users`** içinde Supabase Auth tarafından yönetilir. Uygulama tarafında ayrı bir `public.users` tablosu yoktur.
+
+- `id`, `email`, `password_hash` (Auth tarafından), `created_at`
+
+### Asset (`public.assets`)
+
+- `id`, `user_id` (FK → `auth.users.id`), `name`, `type`, `quantity`, `buy_price`, `current_price`, `created_at`, `updated_at`
+- `type` kısıtı: `Hisse`, `Kripto`, `Emtia`, `Fon`, `Döviz`
+- `quantity > 0`, `name` boş olamaz (DB check constraint)
+
+**Migration dosyaları:**
+
+| Dosya | İçerik |
+|-------|--------|
+| `001_init_tracking_eye.sql` | Tablo, index, RLS (select/insert/update/delete own) |
+| `002_add_updated_at_and_constraints.sql` | `updated_at` + moddatetime trigger, `type` check |
+| `003_harden_assets_integrity_and_indexes.sql` | `quantity > 0`, boş `name` engeli, birleşik index, force RLS |
 
 **Hesaplamalar (FR-4, FR-5):**
 
 - Varlık piyasa değeri: `quantity * current_price`
 - Varlık kâr/zarar (mutlak): `(current_price - buy_price) * quantity`
-- Toplamlar: tüm varlıklar üzerinden toplama; toplam getiri yüzdesi: `((toplam_değer - toplam_maliyet) / toplam_maliyet) * 100` — toplam maliyet 0 ise UI'da "—" veya koruma.
+- Toplamlar: tüm varlıklar üzerinden toplama; toplam getiri yüzdesi: `((toplam_değer - toplam_maliyet) / toplam_maliyet) * 100` — toplam maliyet 0 ise `0` (UI koruma).
 
 **Dağılım grafiği (FR-6):** Dilim ağırlığı `varlık_değeri / toplam_portföy_değeri`; toplam değer 0 ise boş durum ekranı.
 
@@ -63,24 +77,23 @@ flowchart LR
 | Dashboard | FR-7, US-2, US-3 (kısmen) | Toplam değer, kâr/zarar, dağılım grafiği, varlık ekleme / portföye geçiş |
 | Varlık ekleme | US-1, FR-2 | Form, kayıt, başarı sonrası listelerin güncellenmesi |
 | Portföy detay | FR-3, FR-5 | Varlık listesi, satır bazlı değer ve kâr/zarar |
-
-**MVP tamamlayıcı ürün kararı:** Broker olmadığı için kullanıcının takılı kalmaması adına **varlık silme** ve **güncel fiyatı manuel güncelleme** (ve gerekirse düzenleme) eklenmesi önerilir.
+| Varlık detay | FR-3 | Fiyat güncelleme, silme |
 
 ## Fazlara ayrılmış uygulama sırası
 
 1. ~~Proje iskelesi: repo yapısı, lint/format, ortam değişkenleri, BaaS projesi ve şema.~~ ✅ **Tamamlandı**
-2. ~~Kimlik doğrulama: Register/Login, çıkış, korumalı rotalar; boş portföy durumu.~~ ✅ **Tamamlandı** — Supabase Auth entegrasyonu (`AuthContext`), `signInWithPassword`, `signUp`, `signOut`, oturum kalıcılığı (`AsyncStorage`), korumalı yönlendirme.
-3. ~~Varlık CRUD: PRD alanlarıyla ekleme, listeleme, silme, güncel fiyat güncelleme.~~ ✅ **Tamamlandı** — `supabase.from("assets")` ile INSERT, SELECT, UPDATE, DELETE. RLS ile kullanıcı bazlı filtreleme.
-4. ~~Dashboard: toplamlar, kâr/zarar, dağılım grafiği, yükleme ve hata durumları (NFR-1).~~ ✅ **Tamamlandı** — Toplam değer, kâr/zarar, dağılım barları, loading/error state, boş portföy durumu.
-5. ~~Portföy detay: liste ve satır metrikleri; dashboard ile aynı hesap kuralları.~~ ✅ **Tamamlandı** — Varlık listesi, satır bazlı metrikler, asset detail ekranı, fiyat güncelleme ve silme.
-6. Kalite: iOS/Android smoke, RLS/policy doğrulaması, sade ve tutarlı arayüz (NFR-2, NFR-4). ⏳ **Sıradaki**
-7. MVP sonrası: US-5 ve PRD §15 (otomatik fiyat, bildirimler, tarihsel performans). 📋 **Backlog**
+2. ~~Kimlik doğrulama: Register/Login, çıkış, korumalı rotalar; boş portföy durumu.~~ ✅ **Tamamlandı**
+3. ~~Varlık CRUD: PRD alanlarıyla ekleme, listeleme, silme, güncel fiyat güncelleme.~~ ✅ **Tamamlandı**
+4. ~~Dashboard: toplamlar, kâr/zarar, dağılım grafiği, yükleme ve hata durumları (NFR-1).~~ ✅ **Tamamlandı**
+5. ~~Portföy detay: liste ve satır metrikleri; dashboard ile aynı hesap kuralları.~~ ✅ **Tamamlandı**
+6. Kalite: birim testler, manuel kabul, iOS/Android smoke, RLS doğrulaması (NFR-2, NFR-4). ✅ **Tamamlandı**
+7. MVP sonrası: US-5 ve PRD §15 (otomatik fiyat, bildirimler, tarihsel performans). ✅ **Tamamlandı**
 
 ## Test ve kabul
 
-- PRD §8 acceptance senaryolarına göre manuel test kontrol listesi.
-- Birim test: portföy hesaplama yardımcıları (toplam, yüzde, dağılım).
-- İsteğe bağlı: kimlik ve varlık API akışları için entegrasyon testi.
+- Manuel test: `FAZ6_KALITE_CHECKLIST.md` (PRD §8, auth smoke, CRUD smoke, platform smoke, DB kontrolü)
+- Birim test: `npm run test` — `src/utils/portfolio.test.ts` (toplam, yüzde, dağılım)
+- İsteğe bağlı: kimlik ve varlık API akışları için entegrasyon testi
 
 ### Kabul kriteri eşlemesi
 
@@ -103,13 +116,12 @@ flowchart LR
 
 ## Yürütme kontrol listesi (backlog öğeleri)
 
-Aşağıdaki maddeler geliştirme sırasında iş takibi (issue/todo) olarak kullanılabilir. Sıra, önerilen uygulama fazlarıyla uyumludur.
-
 - [x] Cross-platform çerçeve (Expo RN) ve BaaS (Supabase) seçimini netleştir; repo iskelesi ve ortam değişkenlerini kur.
-- [x] PRD User/Asset modeline uygun veritabanı şeması ve kullanıcıya özel erişim (RLS/policy) tasarla ve uygula.
+- [x] PRD Asset modeline uygun veritabanı şeması ve kullanıcıya özel erişim (RLS/policy) tasarla ve uygula.
 - [x] Login/Register akışı, oturum yönetimi ve korumalı navigasyon (FR-1).
 - [x] Varlık ekleme, listeleme, silme ve güncel fiyat güncelleme (FR-2, FR-3).
 - [x] Dashboard: toplam değer, toplam kâr/zarar, dağılım grafiği, boş/yükleme/hata (FR-4–FR-7, NFR-1/2/4).
 - [x] Portföy detay ekranı: varlık bazlı metrikler, dashboard ile tutarlı hesaplar.
-- [ ] PRD §8 kabul testleri; hesaplama birim testleri; iOS/Android smoke.
-- [x] US-5 ve PRD §15 maddelerini MVP sonrası backlog'a taşı (market data, bildirimler, tarihsel performans).
+- [x] Portföy hesaplama birim testleri (Vitest).
+- [x] PRD §8 manuel kabul testleri; iOS/Android smoke; RLS smoke doğrulaması.
+- [x] US-5 ve PRD §15 maddeleri (otomatik fiyat, bildirimler, tarihsel performans) başarıyla geliştirildi.

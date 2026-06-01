@@ -1,12 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import type { ComponentProps } from "react";
+import { useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 import { AllocationBars } from "@/components/ui/AllocationBars";
 import { AssetRow } from "@/components/ui/AssetRow";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { HistoryChart } from "@/components/ui/HistoryChart";
 import { Screen } from "@/components/ui/Screen";
 import { useAuth } from "@/context/AuthContext";
 import { usePortfolio } from "@/context/PortfolioContext";
@@ -14,12 +16,22 @@ import { colors, radius, shadows, spacing, typography } from "@/design/tokens";
 import { formatCurrency, formatPercent } from "@/utils/portfolio";
 
 export default function DashboardScreen() {
-  const { assets, distribution, metrics, isLoading, error } = usePortfolio();
+  const { assets, distribution, metrics, snapshots, isLoading, error, syncMarketPrices } = usePortfolio();
   const { signOut, user } = useAuth();
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const isPositive = metrics.totalPnL >= 0;
 
   const displayEmail = user?.email ?? "Kullanıcı";
+
+  const handleSyncPrices = async () => {
+    setIsSyncing(true);
+    const result = await syncMarketPrices();
+    setIsSyncing(false);
+    if (result?.error) {
+      alert(result.error);
+    }
+  };
 
   return (
     <Screen>
@@ -35,10 +47,23 @@ export default function DashboardScreen() {
             <Text style={styles.name} numberOfLines={1}>{displayEmail}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.iconButton}>
-          <MaterialCommunityIcons name="bell-outline" size={24} color={colors.textPrimary} />
-          <View style={styles.notificationDot} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", gap: spacing.xs }}>
+          <TouchableOpacity 
+            style={styles.iconButton} 
+            onPress={handleSyncPrices}
+            disabled={isSyncing}
+          >
+            {isSyncing ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <MaterialCommunityIcons name="refresh" size={22} color={colors.textPrimary} />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={() => router.push("/alerts")}>
+            <MaterialCommunityIcons name="bell-outline" size={22} color={colors.textPrimary} />
+            <View style={styles.notificationDot} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* MAIN BALANCE SECTION */}
@@ -80,7 +105,13 @@ export default function DashboardScreen() {
           icon="bell-ring-outline" 
           label="Alarmlar" 
           color={colors.textSecondary} 
+          onPress={() => router.push("/alerts")}
         />
+      </View>
+
+      {/* HISTORICAL TREND CHART */}
+      <View style={{ marginBottom: spacing.xl }}>
+        <HistoryChart snapshots={snapshots} />
       </View>
 
       {/* ALLOCATION */}

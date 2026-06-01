@@ -11,3 +11,21 @@ export type Asset = {
 };
 
 export type AssetDraft = Omit<Asset, "id" | "updatedAt">;
+
+export type PortfolioSnapshot = {
+  id: string;
+  totalValue: number;
+  totalCost: number;
+  recordedAt: string;
+};
+
+export type PriceAlert = {
+  id: string;
+  assetName: string;
+  targetPrice: number;
+  condition: "above" | "below";
+  isTriggered: boolean;
+  createdAt: string;
+};
+
+export type PriceAlertDraft = Omit<PriceAlert, "id" | "isTriggered" | "createdAt">;

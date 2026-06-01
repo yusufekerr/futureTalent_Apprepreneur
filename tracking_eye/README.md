@@ -8,6 +8,7 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Surum: 1.0 (MVP)
 - Platform: iOS / Android (cross-platform)
 - Stack: Expo + TypeScript + Expo Router + Supabase
+- Guncel faz: **Faz 6 – Kalite** ✅ (Tamamlandı)
 
 ## Tamamlanan Asamalar
 
@@ -27,6 +28,7 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Korumali rota yonlendirmesi (`app/index.tsx`)
 - Login ve Register ekranlarinda form validasyonu, hata mesajlari, loading state
 - Sifre alanlari icin `secureTextEntry` destegi
+- Turkce auth hata mesajlari (`src/utils/errors.ts`)
 
 ### Faz 3 – Varlik CRUD ✅
 
@@ -34,14 +36,15 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - `PortfolioContext` ile merkezi state yonetimi (`src/context/PortfolioContext.tsx`)
 - DB row ↔ App model arasi `mapRow()` donusumu
 - RLS ile kullaniciya ozel veri erisimi (sunucu tarafinda)
+- Form tarafinda sayisal input dogrulama (`src/utils/number.ts`)
 
 ### Faz 4 – Dashboard ✅
 
 - Toplam portfoy degeri ve kar/zarar metrikleri
 - Varlik dagilim grafigi (animasyonlu bar chart — `AllocationBars`)
 - Bos portfoy, yukleme ve hata durumlari
-- Hizli erisim butonlari (Yeni Varlik, Analiz, Gecmis, Alarmlar)
-- Kullanici bilgisi auth'tan alinarak header'da goruntuleme
+- Hizli erisim butonlari (Yeni Varlik; Analiz/Gecmis/Alarmlar MVP sonrasi)
+- Kullanici bilgiisi auth'tan alinarak header'da goruntuleme
 
 ### Faz 5 – Portfoy Detay ✅
 
@@ -49,12 +52,25 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Varlik detay ekrani (`app/asset/[id].tsx`)
 - Guncel fiyat guncelleme ve varlik silme islemleri
 - Dashboard ile tutarli hesaplama fonksiyonlari (`src/utils/portfolio.ts`)
+- Portfoy listesinde yukleme ve hata durumlari
 
-### Faz 6 – Kalite ⏳ (Siradaki)
+### Faz 6 – Kalite ✅ (Tamamlandı)
 
-- PRD §8 kabul testleri
-- Hesaplama birim testleri
-- iOS/Android smoke test
+- ✅ Portfoy hesaplama birim testleri (`src/utils/portfolio.test.ts`, Vitest)
+- ✅ Manuel kalite checklist (`FAZ6_KALITE_CHECKLIST.md`)
+- ✅ PRD §8 kabul testleri (manuel)
+- ✅ iOS/Android smoke test
+
+### Faz 7 – MVP Sonrasi 📋 (Backlog)
+
+- Otomatik fiyat verisi / market data
+- Fiyat alarmi ve bildirimler
+- Zaman icinde performans grafigi (US-5)
+
+## Veri Modeli (Ozet)
+
+- **Kullanici:** Supabase Auth tarafindan `auth.users` icinde tutulur (email, sifre hash). Uygulama icin ayri `public.users` tablosu yoktur.
+- **Varlik:** `public.assets` tablosunda tutulur; her satir `user_id` ile ilgili kullaniciya baglanir.
 
 ## Proje Yapisi
 
@@ -72,9 +88,10 @@ tracking_eye/
 │   ├── context/            # AuthContext, PortfolioContext
 │   ├── design/             # Tasarim tokenlari (renkler, spacing, tipografi)
 │   ├── lib/                # Supabase istemcisi
-│   ├── types/              # TypeScript tip tanimlari
-│   └── utils/              # Portfoy hesaplama yardimcilari
-├── supabase/migrations/    # Veritabani sema dosyasi
+│   ├── types/              # TypeScript tip tanimlari (database.types.ts dahil)
+│   └── utils/              # Portfoy hesaplama, hata ve sayi yardimcilari
+├── supabase/migrations/    # Veritabani migration dosyalari (001–003)
+├── FAZ6_KALITE_CHECKLIST.md
 └── package.json
 ```
 
@@ -92,10 +109,22 @@ tracking_eye/
    npm run start
    ```
 
+## Gelistirme Komutlari
+
+```bash
+npm run lint       # ESLint
+npm run typecheck  # TypeScript kontrolu
+npm run test       # Vitest birim testleri
+npm run format     # Prettier
+```
+
 ## Supabase Kurulumu
 
-1. [supabase.com](https://supabase.com) uzerinde yeni bir proje olustur.
-2. `supabase/migrations/001_init_tracking_eye.sql` dosyasinin icerigini SQL Editor'da calistir.
+1. [supabase.com](https://supabase.com) uzerinde yeni bir proje olustur (veya duraklatilmis projeyi uyandir).
+2. Asagidaki migration dosyalarini **sirasiyla** SQL Editor'da calistir:
+   - `supabase/migrations/001_init_tracking_eye.sql` — `assets` tablosu, RLS policy'ler
+   - `supabase/migrations/002_add_updated_at_and_constraints.sql` — `updated_at` trigger, `type` check
+   - `supabase/migrations/003_harden_assets_integrity_and_indexes.sql` — `quantity > 0`, bos `name` engeli, birlesik index, force RLS
 3. `public.assets` tablosu ve kullaniciya ozel RLS policy'lerin olustugunu dogrula.
 4. Proje ayarlarindan `URL` ve `anon key` degerlerini al, `.env` dosyasina yapistir.
 
@@ -103,3 +132,4 @@ tracking_eye/
 
 - `GELISTIRME_PLANI.md`: Fazlara ayrilmis uygulama plani ve ilerleme durumu
 - `Yatirim-Takibi-MVP-PRD.md`: Ayrintili urun gereksinimleri ve acceptance criteria
+- `FAZ6_KALITE_CHECKLIST.md`: Manuel kabul, smoke ve DB dogrulama listesi

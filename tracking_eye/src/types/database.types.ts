@@ -45,6 +45,60 @@ export interface Database {
         }
         Relationships: []
       }
+      portfolio_snapshots: {
+        Row: {
+          id: string
+          user_id: string
+          total_value: number
+          total_cost: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string
+          total_value: number
+          total_cost: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          total_value?: number
+          total_cost?: number
+          recorded_at?: string
+        }
+        Relationships: []
+      }
+      price_alerts: {
+        Row: {
+          id: string
+          user_id: string
+          asset_name: string
+          target_price: number
+          condition: "above" | "below"
+          is_triggered: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string
+          asset_name: string
+          target_price: number
+          condition: "above" | "below"
+          is_triggered?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          asset_name?: string
+          target_price?: number
+          condition?: "above" | "below"
+          is_triggered?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

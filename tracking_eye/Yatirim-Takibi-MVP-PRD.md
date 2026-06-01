@@ -3,9 +3,9 @@
 ## 1) Doküman Bilgileri
 - **Ürün Adı:** TrackingEye  
 - **Versiyon:** 1.0 (MVP)  
-- **Aşama:** Faz 1 – MVP  
+- **Aşama:** Faz 6 – Kalite (MVP fonksiyonları tamamlandı)  
 - **Platform:** Mobile (iOS / Android, cross-platform)  
-- **Durum:** Draft  
+- **Durum:** Uygulandı (MVP) — kalite fazı devam ediyor  
 
 ## 2) Problem Tanımı
 Yatırıma yeni başlayan kullanıcılar, yatırımlarını düzenli takip etmekte ve alışkanlık geliştirmekte zorlanmaktadır. Kullanıcılar; varlıklarını tek bir yerde kaydetmek, toplam birikimlerini görmek, kâr/zarar durumunu izlemek ve portföy dağılımını anlamak istemektedir.
@@ -30,9 +30,10 @@ TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alı�
 ### 6.1 MVP Kapsamı (In Scope)
 - Kullanıcı kaydı ve giriş (Login/Register)
 - Varlık ekleme (ad, tür, adet, alış fiyatı, güncel fiyat)
+- Varlık silme ve güncel fiyatı manuel güncelleme
 - Dashboard üzerinde toplam değer ve kâr/zarar gösterimi
 - Portföy detay ekranı
-- Varlık dağılım grafiği (örn. pasta veya sütun grafik)
+- Varlık dağılım grafiği (sütun/bar grafik)
 
 ### 6.2 MVP Dışı (Out of Scope)
 - Gelişmiş teknik analiz araçları
@@ -40,6 +41,7 @@ TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alı�
 - Otomatik al/sat emri ve broker entegrasyonu
 - Çok gelişmiş bildirim ve öneri motorları
 - Web sürümü
+- Zaman içinde performans grafiği (US-5 — MVP sonrası)
 
 ## 7) Kullanıcı Hikayeleri
 1. **Varlık Ekleme:**  
@@ -50,7 +52,7 @@ TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alı�
    Kullanıcı olarak kâr/zarar durumumu görmek istiyorum, böylece performansımı ölçebilirim.
 4. **Varlık Dağılımı:**  
    Kullanıcı olarak hangi varlığa ne kadar yatırım yaptığımı görmek istiyorum, böylece dağılımımı dengeleyebilirim.
-5. **Zaman İçinde Performans:**  
+5. **Zaman İçinde Performans:** *(MVP sonrası)*  
    Kullanıcı olarak yatırım performansımı zaman içinde takip etmek istiyorum, böylece gelişimimi izleyebilirim.
 
 ## 8) Acceptance Criteria
@@ -93,24 +95,32 @@ TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alı�
    - Varlık dağılım grafiği
 3. **Add Asset Screen**
 4. **Portfolio Detail Screen**
+5. **Asset Detail Screen** (fiyat güncelleme, silme)
 
-## 12) Veri Modeli (MVP Önerisi)
+## 12) Veri Modeli (Uygulama)
 
-### User
-- `id`
+### User (Supabase Auth — `auth.users`)
+
+Kullanıcı hesapları Supabase Auth tarafından yönetilir. Uygulama şemasında ayrı `public.users` tablosu bulunmaz.
+
+- `id` (uuid)
 - `email`
-- `password_hash`
+- `password_hash` (Auth tarafından)
 - `created_at`
 
-### Asset
-- `id`
-- `user_id`
-- `name` (örn. BTC, AAPL, XAU)
-- `type` (hisse, kripto, emtia vb.)
-- `quantity`
-- `buy_price`
-- `current_price`
+### Asset (`public.assets`)
+
+- `id` (uuid)
+- `user_id` (FK → `auth.users.id`)
+- `name` (örn. BTC, ASELS, XAU; boş olamaz)
+- `type` (`Hisse` | `Kripto` | `Emtia` | `Fon` | `Döviz`)
+- `quantity` (> 0)
+- `buy_price` (>= 0)
+- `current_price` (>= 0)
 - `created_at`
+- `updated_at` (update trigger ile otomatik)
+
+**Güvenlik:** Row Level Security (RLS) — kullanıcı yalnızca kendi `user_id` satırlarına erişebilir.
 
 ## 13) Başarı Metrikleri (KPIs)
 - Günlük aktif kullanıcı sayısı (DAU)
@@ -122,12 +132,24 @@ TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alı�
 - **Risk:** Kullanıcıların düzenli veri girişi yapmaması alışkanlık hedefini düşürebilir.
 - **Risk:** Karmaşık finans terimleri başlangıç seviyesinde kullanıcıları zorlayabilir.
 - **Varsayım:** Kullanıcılar hızlı ve sade bir deneyimi gelişmiş özelliklere tercih edecektir.
-- **Varsayım:** MVP’de temel metrikler, ürünün değerini doğrulamak için yeterli olacaktır.
+- **Varsayım:** MVP'de temel metrikler, ürünün değerini doğrulamak için yeterli olacaktır.
 
 ## 15) MVP Sonrası Yol Haritası (Özet)
 - Fiyat verisi otomasyonu / market data entegrasyonu
 - Fiyat alarmı ve bildirimler
-- Daha detaylı performans analizi
+- Daha detaylı performans analizi (US-5 — zaman içinde performans grafiği)
 - Kategori bazlı raporlar ve hedef takibi
 - Çoklu dil ve kişiselleştirilmiş deneyim
 
+## 16) Uygulama Durumu (Özet)
+
+| Alan | Durum |
+|------|-------|
+| Auth (Login/Register/Logout) | ✅ Uygulandı |
+| Asset CRUD | ✅ Uygulandı |
+| Dashboard metrikleri + dağılım | ✅ Uygulandı |
+| Portföy detay + varlık detay | ✅ Uygulandı |
+| DB migration + RLS | ✅ Uygulandı (001–003) |
+| Birim testler (hesaplama) | ✅ Uygulandı |
+| Manuel kabul + platform smoke | ✅ Uygulandı (`FAZ6_KALITE_CHECKLIST.md`) |
+| US-5 / otomatik fiyat / bildirimler | 📋 Backlog |
