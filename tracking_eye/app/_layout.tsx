@@ -21,7 +21,6 @@ function AppContent() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="asset/[id]" options={{ headerShown: true, title: "Varlık Detayı" }} />
-        <Stack.Screen name="alerts" options={{ headerShown: true, title: "Fiyat Alarmları" }} />
       </Stack>
 
       {/* Global Price Alert Overlay Modal */}

@@ -37,7 +37,16 @@ export default function TabsLayout() {
         options={{ 
           title: "Özet",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "home-variant" : "home-variant-outline"} size={28} color={color} />
+            <MaterialCommunityIcons name={focused ? "home-variant" : "home-variant-outline"} size={26} color={color} />
+          )
+        }} 
+      />
+      <Tabs.Screen 
+        name="portfolio" 
+        options={{ 
+          title: "Portföy",
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons name={focused ? "briefcase" : "briefcase-outline"} size={26} color={color} />
           )
         }} 
       />
@@ -47,17 +56,26 @@ export default function TabsLayout() {
           title: "Ekle",
           tabBarIcon: () => (
             <View style={styles.addWrap}>
-              <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
+              <MaterialCommunityIcons name="plus" size={30} color="#FFFFFF" />
             </View>
           )
         }} 
       />
       <Tabs.Screen 
-        name="portfolio" 
+        name="ai-advisor" 
         options={{ 
-          title: "Portföy",
+          title: "AI Danışman",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "briefcase" : "briefcase-outline"} size={28} color={color} />
+            <MaterialCommunityIcons name={focused ? "brain" : "brain"} size={26} color={color} style={{ opacity: focused ? 1 : 0.65 }} />
+          )
+        }} 
+      />
+      <Tabs.Screen 
+        name="alerts" 
+        options={{ 
+          title: "Alarmlar",
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons name={focused ? "bell" : "bell-outline"} size={26} color={color} />
           )
         }} 
       />

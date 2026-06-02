@@ -9,5 +9,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const env = {
   supabaseUrl,
-  supabaseAnonKey
+  supabaseAnonKey,
+  geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY || ""
 };

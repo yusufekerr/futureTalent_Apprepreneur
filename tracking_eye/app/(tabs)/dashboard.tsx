@@ -13,6 +13,7 @@ import { Screen } from "@/components/ui/Screen";
 import { useAuth } from "@/context/AuthContext";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, radius, shadows, spacing, typography } from "@/design/tokens";
+import { getQuickDashboardInsight } from "@/services/ai";
 import { formatCurrency, formatPercent } from "@/utils/portfolio";
 
 export default function DashboardScreen() {
@@ -95,6 +96,7 @@ export default function DashboardScreen() {
           icon="chart-pie" 
           label="Analiz" 
           color={colors.secondary} 
+          onPress={() => router.push("/(tabs)/ai-advisor")}
         />
         <ActionButton 
           icon="history" 
@@ -105,7 +107,7 @@ export default function DashboardScreen() {
           icon="bell-ring-outline" 
           label="Alarmlar" 
           color={colors.textSecondary} 
-          onPress={() => router.push("/alerts")}
+          onPress={() => router.push("/(tabs)/alerts")}
         />
       </View>
 
@@ -113,6 +115,25 @@ export default function DashboardScreen() {
       <View style={{ marginBottom: spacing.xl }}>
         <HistoryChart snapshots={snapshots} />
       </View>
+
+      {/* AI PORTFOLIO INSIGHT WIDGET */}
+      <TouchableOpacity 
+        style={styles.aiCard} 
+        activeOpacity={0.9} 
+        onPress={() => router.push("/(tabs)/ai-advisor")}
+      >
+        <View style={styles.aiCardHeader}>
+          <MaterialCommunityIcons name="brain" size={22} color={colors.secondary} />
+          <Text style={styles.aiCardTitle}>AI Portföy Analizi</Text>
+        </View>
+        <Text style={styles.aiCardText}>
+          {getQuickDashboardInsight(assets, distribution, metrics)}
+        </Text>
+        <View style={styles.aiCardFooter}>
+          <Text style={styles.aiCardLink}>Detaylı AI Danışmana Sor</Text>
+          <MaterialCommunityIcons name="arrow-right" size={14} color={colors.secondary} />
+        </View>
+      </TouchableOpacity>
 
       {/* ALLOCATION */}
       <Card style={styles.sectionCard}>
@@ -319,5 +340,41 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     textAlign: "center",
     paddingVertical: spacing.lg,
+  },
+  aiCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
+  },
+  aiCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  aiCardTitle: {
+    fontSize: typography.body,
+    fontWeight: "800",
+    color: colors.textPrimary,
+  },
+  aiCardText: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: 18,
+    marginBottom: spacing.sm,
+  },
+  aiCardFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  aiCardLink: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.secondary,
   }
 });

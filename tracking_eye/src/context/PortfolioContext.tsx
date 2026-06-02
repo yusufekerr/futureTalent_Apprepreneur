@@ -226,10 +226,11 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       const freshAssets = await refreshAndSnapshot();
       setIsLoading(false);
       return { error: null, assets: freshAssets };
-    } catch (err: any) {
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : "Bilinmeyen bir hata oluştu.";
       setIsLoading(false);
-      setError(err.message || "Bilinmeyen bir hata oluştu.");
-      return { error: err.message || "Bilinmeyen bir hata oluştu." };
+      setError(errMsg);
+      return { error: errMsg };
     }
   }, [user, assets, refreshAndSnapshot]);
 

@@ -15,7 +15,7 @@ import { formatCurrency } from "@/utils/portfolio";
 
 export default function AlertsScreen() {
   const { assets } = usePortfolio();
-  const { alerts, addAlert, removeAlert, isLoading: alertsLoading } = useAlerts();
+  const { alerts, addAlert, removeAlert } = useAlerts();
 
   const [selectedAsset, setSelectedAsset] = useState<string>("");
   const [condition, setCondition] = useState<"above" | "below">("above");

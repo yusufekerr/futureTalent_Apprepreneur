@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 import type { Asset } from "../types/portfolio";
 import { getUpdatedPrices, simulatePriceFluctuation } from "./marketData";
@@ -30,6 +30,26 @@ describe("market data simulation", () => {
 });
 
 describe("market data fetch and update mapping", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              bitcoin: { try: 2350000 },
+              ethereum: { try: 115000 }
+            })
+        })
+      )
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("maps new simulated prices correctly to asset array", async () => {
     const assets: Asset[] = [
       {
