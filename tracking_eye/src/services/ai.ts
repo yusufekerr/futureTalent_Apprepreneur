@@ -27,7 +27,7 @@ export async function saveApiKey(key: string): Promise<void> {
 export async function getApiKey(): Promise<string | null> {
   const customKey = await AsyncStorage.getItem(API_KEY_STORAGE_KEY);
   if (customKey) return customKey;
-  
+
   // Fallback to Expo environment variable if set
   return process.env.EXPO_PUBLIC_GEMINI_API_KEY || null;
 }
@@ -70,7 +70,7 @@ export function generateOfflineResponse(
 
     let riskLevel = "Orta Risk";
     let riskDesc = "Portföyünüz dengeli bir risk dağılımına sahip görünüyor.";
-    
+
     if (cryptoRatio > 50) {
       riskLevel = "Yüksek Risk 🚨";
       riskDesc = `Portföyünüzün **%${cryptoRatio.toFixed(1)}** gibi büyük bir kısmı **Kripto** varlıklarda bulunuyor. Kripto piyasaları yüksek volatiliteye sahip olduğu için sert düşüşlere karşı hassastır.`;
@@ -153,9 +153,9 @@ export async function generateAIResponse(
   }
 ): Promise<string> {
   const apiKey = await getApiKey();
-  
+
   const lastUserMessage = messages[messages.length - 1]?.content || "Genel analiz yap";
-  
+
   if (!apiKey) {
     // Return offline mock response if key is missing
     return generateOfflineResponse(lastUserMessage, portfolioData);
@@ -203,7 +203,7 @@ Kullanıcının Portföy Verileri:
   // Gemini 1.5 chat structure:
   // contents: [{ role: 'user', parts: [{ text: '...' }] }, { role: 'model', parts: [{ text: '...' }] }]
   // Note: the system instructions can be passed as systemInstruction in the request body for Gemini 1.5.
-  
+
   const contents = [
     // Include user chat history
     ...messages.map((m) => ({
@@ -222,7 +222,7 @@ Kullanıcının Portföy Verileri:
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
@@ -249,11 +249,11 @@ Kullanıcının Portföy Verileri:
 
     const data = await response.json();
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
+
     if (!reply) {
       throw new Error("Yapay zeka boş yanıt döndürdü.");
     }
-    
+
     return reply;
   } catch (error) {
     const errMessage = error instanceof Error ? error.message : String(error);
@@ -284,7 +284,7 @@ export function getQuickDashboardInsight(
   if (cryptoRatio > 55) {
     return `🚨 Portföyünüz yüksek volatiliteye sahip kripto ağırlıklıdır (%${cryptoRatio.toFixed(0)}). Risk dengesi için emtia veya döviz düşünebilirsiniz.`;
   }
-  
+
   if (stockRatio > 60) {
     return `📈 Portföyünüz %${stockRatio.toFixed(0)} oranında hisse senedi ağırlıklıdır. Olası piyasa düzeltmelerine karşı emtia ekleyerek riskinizi azaltabilirsiniz.`;
   }
