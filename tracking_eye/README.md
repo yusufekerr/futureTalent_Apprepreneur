@@ -72,64 +72,73 @@ TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - **Kullanici:** Supabase Auth tarafindan `auth.users` icinde tutulur (email, sifre hash). Uygulama icin ayri `public.users` tablosu yoktur.
 - **Varlik:** `public.assets` tablosunda tutulur; her satir `user_id` ile ilgili kullaniciya baglanir.
 
-## Proje Yapisi
+## Proje Yapısı
 
 ```
 tracking_eye/
-├── app/                    # Expo Router sayfalari
-│   ├── (auth)/             # Login, Register ekranlari
-│   ├── (tabs)/             # Dashboard, Add Asset, Portfolio
-│   ├── asset/              # Varlik detay ekrani [id].tsx
-│   ├── _layout.tsx         # Root layout (AuthProvider > PortfolioProvider)
-│   └── index.tsx           # Giris yonlendirmesi
-├── src/
-│   ├── components/ui/      # Yeniden kullanilabilir UI bilesenleri
-│   ├── config/             # Ortam degiskenleri
-│   ├── context/            # AuthContext, PortfolioContext
-│   ├── design/             # Tasarim tokenlari (renkler, spacing, tipografi)
-│   ├── lib/                # Supabase istemcisi
-│   ├── types/              # TypeScript tip tanimlari (database.types.ts dahil)
-│   └── utils/              # Portfoy hesaplama, hata ve sayi yardimcilari
-├── supabase/migrations/    # Veritabani migration dosyalari (001–003)
-├── FAZ6_KALITE_CHECKLIST.md
-└── package.json
+├── frontend/               # Arayüz Kodu (Expo Mobile App)
+│   ├── app/                # Expo Router sayfaları (auth, tabs, asset detay)
+│   ├── src/                # Bileşenler, contextler, tasarım tokenları ve servisler
+│   ├── package.json        # Bağımlılıklar ve script tanımları
+│   └── tsconfig.json       # TypeScript yapılandırması
+├── backend/                # Arkayüz Kodu
+│   └── supabase/           # Veritabanı şemaları, migration SQL dosyaları ve RLS politikaları
+├── prodocs/                # Yapay Zeka Ajanları için Geliştirme Referans Dosyaları (Zorunlu)
+│   ├── PRD.md              # Çözülen problem, hedef kullanıcı, temel özellikler
+│   ├── Plan.md             # Kullanıcı hikayelerine bölünmüş teknik adımlar
+│   ├── tech-stack.md       # Kullanılan teknolojiler ve gerekçeleri
+│   ├── DesignSystem.md     # Renk paleti, tipografi ve bileşen kuralları
+│   ├── Progress.md         # Geliştirme günlüğü ve alınan kararların kaydı
+│   └── FAZ6_KALITE_CHECKLIST.md # Manuel kabul testleri listesi
+├── .gitignore              # Gereksiz dosyaların repoya girmesini engeller
+├── .env.example            # Kök dizinde yer alan örnek env şablonu
+└── README.md               # Bu dosya (Uygulamayı tanıtan onepager)
 ```
 
 ## Kurulum
 
-1. Paketleri kur:
+1. Frontend klasörüne geçin ve paketleri kurun:
    ```bash
+   cd frontend
    npm install
    ```
-2. Ortam degiskenlerini ayarla:
-   - `.env.example` dosyasini `.env` olarak kopyala.
-   - `EXPO_PUBLIC_SUPABASE_URL` ve `EXPO_PUBLIC_SUPABASE_ANON_KEY` degerlerini gir.
-3. Gelistirme sunucusunu baslat:
+2. Ortam değişkenlerini ayarlayın:
+   - `frontend/` klasörü içerisindeki `.env.example` dosyasını `.env` olarak kopyalayın (veya kök dizindeki `.env.example`'dan yararlanın).
+   - `EXPO_PUBLIC_SUPABASE_URL` ve `EXPO_PUBLIC_SUPABASE_ANON_KEY` değerlerini girin.
+   - İsteğe bağlı olarak canlı AI analizleri almak için `EXPO_PUBLIC_GEMINI_API_KEY` değerini ekleyin.
+3. Geliştirme sunucusunu başlatın:
    ```bash
    npm run start
    ```
 
-## Gelistirme Komutlari
+## Geliştirme Komutları
+
+Aşağıdaki komutları **`frontend/`** dizininde çalıştırabilirsiniz:
 
 ```bash
-npm run lint       # ESLint
-npm run typecheck  # TypeScript kontrolu
+npm run lint       # ESLint kontrolü
+npm run typecheck  # TypeScript kontrolü
 npm run test       # Vitest birim testleri
-npm run format     # Prettier
+npm run format     # Prettier kod biçimlendirmesi
 ```
 
 ## Supabase Kurulumu
 
-1. [supabase.com](https://supabase.com) uzerinde yeni bir proje olustur (veya duraklatilmis projeyi uyandir).
-2. Asagidaki migration dosyalarini **sirasiyla** SQL Editor'da calistir:
-   - `supabase/migrations/001_init_tracking_eye.sql` — `assets` tablosu, RLS policy'ler
-   - `supabase/migrations/002_add_updated_at_and_constraints.sql` — `updated_at` trigger, `type` check
-   - `supabase/migrations/003_harden_assets_integrity_and_indexes.sql` — `quantity > 0`, bos `name` engeli, birlesik index, force RLS
-3. `public.assets` tablosu ve kullaniciya ozel RLS policy'lerin olustugunu dogrula.
-4. Proje ayarlarindan `URL` ve `anon key` degerlerini al, `.env` dosyasina yapistir.
+1. [supabase.com](https://supabase.com) üzerinde yeni bir proje oluşturun.
+2. Aşağıdaki migration dosyalarını **sırasıyla** SQL Editor'da çalıştırın:
+   - `backend/supabase/migrations/001_init_tracking_eye.sql` — `assets` tablosu, RLS politikaları
+   - `backend/supabase/migrations/002_add_updated_at_and_constraints.sql` — `updated_at` tetikleyicisi, `type` kontrolü
+   - `backend/supabase/migrations/003_harden_assets_integrity_and_indexes.sql` — veri doğrulama ve birleşik indeksler
+   - `backend/supabase/migrations/004_create_portfolio_snapshots.sql` — zaman serisi performans tablosu
+   - `backend/supabase/migrations/005_create_price_alerts.sql` — kullanıcı tanımlı fiyat alarmları tablosu
+3. `public.assets`, `public.portfolio_snapshots` ve `public.price_alerts` tablolarının oluştuğunu doğrulayın.
+4. Supabase projenizin `URL` ve `anon key` değerlerini kopyalayarak `frontend/.env` dosyasına yapıştırın.
 
-## Dokumanlar
+## Dokümanlar (prodocs/)
 
-- `GELISTIRME_PLANI.md`: Fazlara ayrilmis uygulama plani ve ilerleme durumu
-- `Yatirim-Takibi-MVP-PRD.md`: Ayrintili urun gereksinimleri ve acceptance criteria
-- `FAZ6_KALITE_CHECKLIST.md`: Manuel kabul, smoke ve DB dogrulama listesi
+- `prodocs/PRD.md`: Projenin anayasası; çözülen problem ve temel gereksinimler.
+- `prodocs/Plan.md`: Adım adım kullanıcı hikayeleri ve teknik planlama.
+- `prodocs/tech-stack.md`: Kullanılan tüm servis ve kütüphanelerin gerekçelendirilmesi.
+- `prodocs/DesignSystem.md`: Renk, spacing, radius ve görsel bütünlük kuralları.
+- `prodocs/Progress.md`: Projenin geliştirilme aşamasındaki kararlar ve sürüm günlüğü.
+- `prodocs/FAZ6_KALITE_CHECKLIST.md`: Kalite kontrol ve kabul testleri listesi.
