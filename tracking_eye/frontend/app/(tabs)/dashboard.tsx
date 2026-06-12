@@ -337,6 +337,10 @@ export default function DashboardScreen() {
                           icon = <RefreshCw size={16} color={colors.primary} />;
                           title = "Senkronizasyon";
                           details = "Piyasa fiyatları güncellendi.";
+                        } else if (tx.type === "SELL") {
+                          icon = <TrendingDown size={16} color={colors.warning} />;
+                          title = "Varlık Satıldı";
+                          details = `${tx.assetName} · ${tx.quantity} adet satıldı @ ${formatCurrency(tx.price ?? 0)}`;
                         }
 
                         const txDate = new Date(tx.timestamp).toLocaleDateString("tr-TR", {

@@ -40,11 +40,12 @@ Bu dokümanda, InvestWatch projesinin başlangıcından teslim aşamasına kadar
 - **Yapılanlar:** Brief gereksinimlerine göre klasör yapısı kökten düzenlendi. Tüm mobil arayüz kodları `/frontend` altına, Supabase backend sql kodları ise `/backend/supabase` altına taşındı.
 - **Dökümantasyon:** `tech-stack.md`, `DesignSystem.md` ve `Progress.md` zorunlu dökümanları oluşturularak `/prodocs` altına yerleştirildi. Eski isimli dökümanlar brief standartlarına göre yeniden adlandırıldı (`PRD.md` ve `Plan.md`).
 
-### Faz 9 – Dinamik Varlık Seçimi & Yerelleştirme ✅ (Tamamlandı)
+### Faz 9 – Dinamik Varlık Seçimi, Kısmi Satış & Yerelleştirme ✅ (Tamamlandı)
 - **Dinamik Varlık Seçici:** Varlık Ekleme ekranında manuel metin girişi yerine, aktif varlık tipine göre değişen şık bir modal seçim listesi geliştirildi. Listede bulunmayan özel varlıklar için "Diğer (Manuel Ekle)" seçeneği eklendi.
 - **Otomatik Fiyat Desteği:** Seçilen varlığın taban fiyatının form alanlarına (Alış/Güncel Fiyat) otomatik dolması sağlanarak kullanıcı girdisi hızlandırıldı.
 - **Yerelleştirilmiş Emtialar:** Türkiye özelinde kullanım kolaylığı sağlamak için yabancı ons bazlı `XAU` yerine `Gram Altın`, `Çeyrek Altın`, `Cumhuriyet Altını` ve `Gram Gümüş` varlıkları ve simülasyon taban fiyatları sisteme entegre edildi.
-- **Hızlı Giriş Güncellemesi:** Test/demo girişindeki seeding varlığı "ALTIN (XAU)" yerine "Gram Altın" olarak güncellendi.
+- **Kısmi Varlık Satışı (Sell Portion):** Varlık detay sayfasına kısmi adet satışı yapabilen form kartı ve `sellAsset` context metodu eklendi. Satış işlemi yapıldığında kalan miktar azaltılır ve `"SELL"` işlemi işlem geçmişinde (tabbed history modal) "Varlık Satıldı" adıyla `TrendingDown` ikonu ile gösterilir.
+- **Veri Düzeltme (Self-Healing):** Demo kullanıcısı giriş yaptığında eski veritabanı kayıtlarında kalan "ALTIN (XAU)" varlığı varsa, otomatik olarak "Gram Altın" ismine güncellenmesi sağlandı.
 
 ---
 

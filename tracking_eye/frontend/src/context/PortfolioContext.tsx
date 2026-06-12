@@ -39,6 +39,7 @@ type PortfolioContextValue = {
   addAsset: (draft: AssetDraft) => Promise<{ error: string | null }>;
   updatePrice: (id: string, nextPrice: number) => Promise<{ error: string | null }>;
   removeAsset: (id: string) => Promise<{ error: string | null }>;
+  sellAsset: (id: string, sellQty: number, sellPrice: number) => Promise<{ error: string | null }>;
   refresh: () => Promise<void>;
   syncMarketPrices: () => Promise<{ error: string | null; assets?: Asset[] }>;
   metrics: ReturnType<typeof getPortfolioMetrics>;
@@ -267,6 +268,39 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     [assets, refreshAndSnapshot, addTransactionRecord]
   );
 
+  /* ---- sell asset ---- */
+  const sellAsset = useCallback(
+    async (id: string, sellQty: number, sellPrice: number): Promise<{ error: string | null }> => {
+      if (!user) return { error: "Oturum bulunamadı." };
+
+      const assetToSell = assets.find(a => a.id === id);
+      if (!assetToSell) return { error: "Varlık bulunamadı." };
+
+      if (sellQty <= 0) return { error: "Satılacak miktar 0'dan büyük olmalıdır." };
+      if (sellQty > assetToSell.quantity) return { error: "Yetersiz varlık miktarı." };
+
+      if (sellQty === assetToSell.quantity) {
+        return removeAsset(id);
+      }
+
+      const nextQty = assetToSell.quantity - sellQty;
+      const { error: err } = await supabase
+        .from("assets")
+        .update({ quantity: nextQty })
+        .eq("id", id);
+
+      if (err) {
+        setError(err.message);
+        return { error: err.message };
+      }
+
+      await refreshAndSnapshot();
+      await addTransactionRecord("SELL", assetToSell.name, sellQty, sellPrice);
+      return { error: null };
+    },
+    [user, assets, refreshAndSnapshot, addTransactionRecord, removeAsset]
+  );
+
   /* ---- sync market prices ---- */
   const syncMarketPrices = useCallback(async (): Promise<{ error: string | null; assets?: Asset[] }> => {
     if (!user) return { error: "Oturum bulunamadı." };
@@ -317,13 +351,14 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       addAsset,
       updatePrice,
       removeAsset,
+      sellAsset,
       refresh: fetchAssets,
       syncMarketPrices,
       metrics,
       distribution,
       clearTransactions
     }),
-    [assets, snapshots, transactions, isLoading, error, addAsset, updatePrice, removeAsset, fetchAssets, syncMarketPrices, metrics, distribution, clearTransactions]
+    [assets, snapshots, transactions, isLoading, error, addAsset, updatePrice, removeAsset, sellAsset, fetchAssets, syncMarketPrices, metrics, distribution, clearTransactions]
   );
 
   return <PortfolioContext.Provider value={value}>{children}</PortfolioContext.Provider>;

@@ -8,7 +8,7 @@ InvestWatch, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Surum: 1.0 (MVP)
 - Platform: iOS / Android (cross-platform)
 - Stack: Expo + TypeScript + Expo Router + Supabase
-- Guncel faz: **Faz 9 – Dinamik Varlık Seçimi & Yerelleştirme** ✅ (Tamamlandı)
+- Guncel faz: **Faz 9 – Dinamik Varlık Seçimi, Kısmi Satış & Yerelleştirme** ✅ (Tamamlandı)
 
 ## Tamamlanan Asamalar
 
@@ -72,11 +72,13 @@ InvestWatch, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 - Tüm mobil arayüz kodları `/frontend` klasörü altına, Supabase veritabanı şemaları `/backend/supabase` altına taşındı.
 - Projenin AI ajanları ve geliştiriciler için referans oluşturan `prodocs/` dokümantasyonu tamamlandı.
 
-### Faz 9 – Dinamik Varlık Seçimi & Yerelleştirme ✅ (Tamamlandı)
+### Faz 9 – Dinamik Varlık Seçimi, Kısmi Satış & Yerelleştirme ✅ (Tamamlandı)
 
 - Varlık ekleme ekranında manuel giriş yerine kategorilere özel dinamik seçim modalı geliştirildi.
 - Türkiye özeline uyum sağlamak için ons bazlı `XAU` yerine `Gram Altın`, `Çeyrek Altın`, `Cumhuriyet Altını` ve `Gram Gümüş` varlıkları ile simülasyon desteği entegre edildi.
 - Seçilen varlığın taban fiyatının form alanlarına (Alış/Güncel Fiyat) otomatik dolması (auto-fill) sağlandı.
+- Varlık detay ekranına "Kısmi Satış Yap" (Sell Portion) kartı ve işlem loglama altyapısı eklendi.
+- Eski veritabanı kayıtlarındaki `"ALTIN (XAU)"` ismini giriş yapıldığında otomatik olarak `"Gram Altın"` olarak güncelleyen veri düzeltme (self-healing) mekanizması entegre edildi.
 
 ## Veri Modeli (Ozet)
 

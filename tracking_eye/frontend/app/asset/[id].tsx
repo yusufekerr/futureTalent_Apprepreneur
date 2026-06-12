@@ -15,11 +15,16 @@ import { formatCurrency, getAssetCost, getAssetPnL, getAssetValue } from "@/util
 
 export default function AssetDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { assets, removeAsset, updatePrice } = usePortfolio();
+  const { assets, removeAsset, updatePrice, sellAsset } = usePortfolio();
   const asset = useMemo(() => assets.find((item) => item.id === id), [assets, id]);
   const [nextPrice, setNextPrice] = useState(asset ? String(asset.currentPrice) : "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [sellQty, setSellQty] = useState("");
+  const [sellPrice, setSellPrice] = useState("");
+  const [sellError, setSellError] = useState("");
+  const [sellSuccess, setSellSuccess] = useState("");
 
   if (!asset) {
     return (
@@ -58,6 +63,43 @@ export default function AssetDetailScreen() {
     }
   };
 
+  const handleSell = async () => {
+    setSellError("");
+    setSellSuccess("");
+    const parsedQty = toPositiveNumber(sellQty);
+    const parsedPrice = toPositiveNumber(sellPrice);
+
+    if (parsedQty === null || parsedQty <= 0) {
+      setSellError("Geçerli ve 0'dan büyük bir satış adedi giriniz.");
+      return;
+    }
+    if (parsedQty > asset.quantity) {
+      setSellError(`Yetersiz varlık miktarı. En fazla ${asset.quantity} adet satabilirsiniz.`);
+      return;
+    }
+    if (parsedPrice === null || parsedPrice <= 0) {
+      setSellError("Geçerli ve 0'dan büyük bir satış fiyatı giriniz.");
+      return;
+    }
+
+    setLoading(true);
+    const result = await sellAsset(asset.id, parsedQty, parsedPrice);
+    setLoading(false);
+
+    if (result.error) {
+      setSellError(result.error);
+    } else {
+      setSellSuccess("Satış işlemi başarıyla kaydedildi.");
+      setSellQty("");
+      setSellPrice("");
+      if (parsedQty === asset.quantity) {
+        setTimeout(() => {
+          router.replace("/(tabs)/portfolio");
+        }, 1500);
+      }
+    }
+  };
+
   return (
     <Screen>
       <View style={styles.headerRow}>
@@ -68,10 +110,11 @@ export default function AssetDetailScreen() {
         >
           <ArrowLeft size={22} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Varlık Detayı</Text>
+        <Text style={headerRowTitleStyles.headerTitle}>Varlık Detayı</Text>
         <View style={{ width: 40 }} />
       </View>
       <SectionHeader title={`${asset.name} Detayi`} subtitle={`${asset.type} · ${asset.quantity} adet`} />
+      
       <Card>
         <View style={styles.stats}>
           <Text style={styles.text}>Toplam Deger: {formatCurrency(getAssetValue(asset))}</Text>
@@ -81,8 +124,10 @@ export default function AssetDetailScreen() {
           </Text>
         </View>
       </Card>
+
       <Card>
         <View style={styles.stats}>
+          <Text style={styles.sectionTitle}>Fiyat Güncelle</Text>
           <Input label="Guncel Fiyat" value={nextPrice} onChangeText={setNextPrice} keyboardType="numeric" />
           <Button
             label={loading ? "Güncelleniyor..." : "Fiyati Guncelle"}
@@ -91,28 +136,81 @@ export default function AssetDetailScreen() {
           />
         </View>
       </Card>
+
+      <Card>
+        <View style={styles.stats}>
+          <Text style={styles.sectionTitle}>Kısmi Satış Yap</Text>
+          <View style={styles.row}>
+            <View style={{ flex: 1 }}>
+              <Input 
+                label="Satış Adedi" 
+                value={sellQty} 
+                onChangeText={setSellQty} 
+                keyboardType="numeric" 
+                placeholder="0" 
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Input 
+                label="Satış Fiyatı (TRY)" 
+                value={sellPrice} 
+                onChangeText={setSellPrice} 
+                keyboardType="numeric" 
+                placeholder="0.00" 
+              />
+            </View>
+          </View>
+          <Button
+            label={loading ? "İşlem yapılıyor..." : "Satışı Kaydet"}
+            disabled={loading}
+            onPress={handleSell}
+          />
+          {sellSuccess ? <Text style={styles.successText}>{sellSuccess}</Text> : null}
+          {sellError ? <Text style={styles.errorText}>{sellError}</Text> : null}
+        </View>
+      </Card>
+
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <Button
-        variant="danger"
-        label={loading ? "Siliniyor..." : "Varligi Sil"}
-        disabled={loading}
-        onPress={handleRemove}
-      />
+      
+      <View style={{ marginTop: spacing.md }}>
+        <Button
+          variant="danger"
+          label={loading ? "Siliniyor..." : "Varligi Sil"}
+          disabled={loading}
+          onPress={handleRemove}
+        />
+      </View>
     </Screen>
   );
 }
+
+const headerRowTitleStyles = StyleSheet.create({
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.textPrimary,
+  }
+});
 
 const styles = StyleSheet.create({
   stats: {
     gap: spacing.sm
   },
   text: {
-    color: colors.textPrimary
+    color: colors.textPrimary,
+    fontWeight: "600"
   },
   errorText: {
     color: colors.danger,
     fontWeight: "600",
-    textAlign: "center"
+    textAlign: "center",
+    marginTop: spacing.xs
+  },
+  successText: {
+    color: colors.success,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: spacing.xs
   },
   headerRow: {
     flexDirection: "row",
@@ -130,9 +228,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.textPrimary,
+  row: {
+    flexDirection: "row",
+    gap: spacing.md
   },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    color: colors.textSecondary,
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs
+  }
 });

@@ -30,7 +30,7 @@ export type PriceAlert = {
 
 export type PriceAlertDraft = Omit<PriceAlert, "id" | "isTriggered" | "createdAt">;
 
-export type TransactionType = "ADD" | "REMOVE" | "UPDATE" | "SYNC";
+export type TransactionType = "ADD" | "REMOVE" | "UPDATE" | "SYNC" | "SELL";
 
 export type Transaction = {
   id: string;

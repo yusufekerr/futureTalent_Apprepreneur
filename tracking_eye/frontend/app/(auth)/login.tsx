@@ -69,6 +69,13 @@ export default function LoginScreen() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // Self-healing: Update legacy "ALTIN (XAU)" asset to "Gram Altın" for existing accounts
+        await supabase
+          .from("assets")
+          .update({ name: "Gram Altın" })
+          .eq("user_id", user.id)
+          .eq("name", "ALTIN (XAU)");
+
         const { data: existingAssets } = await supabase
           .from("assets")
           .select("id")
