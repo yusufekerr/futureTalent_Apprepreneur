@@ -36,9 +36,15 @@ Bu dokümanda, InvestWatch projesinin başlangıcından teslim aşamasına kadar
 - **Alarm Bildirimleri:** `supabase/migrations/005_create_price_alerts.sql` ile fiyat alarmları tablosu eklendi. Belirlenen hedefe ulaşıldığında dashboard'da uyarı tetiklenmesi sağlandı.
 - **Performans Grafiği (Zaman Serisi):** Portföy geçmişini izlemek için `portfolio_snapshots` tablosu (`004_create_portfolio_snapshots.sql`) eklenerek zaman serisi grafiği (`HistoryChart`) entegre edildi.
 
-### Faz 8 – Klasör Yapısı & Brief Uyumu (Şu anki Faz)
+### Faz 8 – Klasör Yapısı & Brief Uyumu
 - **Yapılanlar:** Brief gereksinimlerine göre klasör yapısı kökten düzenlendi. Tüm mobil arayüz kodları `/frontend` altına, Supabase backend sql kodları ise `/backend/supabase` altına taşındı.
 - **Dökümantasyon:** `tech-stack.md`, `DesignSystem.md` ve `Progress.md` zorunlu dökümanları oluşturularak `/prodocs` altına yerleştirildi. Eski isimli dökümanlar brief standartlarına göre yeniden adlandırıldı (`PRD.md` ve `Plan.md`).
+
+### Faz 9 – Dinamik Varlık Seçimi & Yerelleştirme ✅ (Tamamlandı)
+- **Dinamik Varlık Seçici:** Varlık Ekleme ekranında manuel metin girişi yerine, aktif varlık tipine göre değişen şık bir modal seçim listesi geliştirildi. Listede bulunmayan özel varlıklar için "Diğer (Manuel Ekle)" seçeneği eklendi.
+- **Otomatik Fiyat Desteği:** Seçilen varlığın taban fiyatının form alanlarına (Alış/Güncel Fiyat) otomatik dolması sağlanarak kullanıcı girdisi hızlandırıldı.
+- **Yerelleştirilmiş Emtialar:** Türkiye özelinde kullanım kolaylığı sağlamak için yabancı ons bazlı `XAU` yerine `Gram Altın`, `Çeyrek Altın`, `Cumhuriyet Altını` ve `Gram Gümüş` varlıkları ve simülasyon taban fiyatları sisteme entegre edildi.
+- **Hızlı Giriş Güncellemesi:** Test/demo girişindeki seeding varlığı "ALTIN (XAU)" yerine "Gram Altın" olarak güncellendi.
 
 ---
 

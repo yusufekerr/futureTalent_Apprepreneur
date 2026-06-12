@@ -79,7 +79,7 @@ export default function LoginScreen() {
           await supabase.from("assets").insert([
             { user_id: user.id, name: "BTC", type: "Kripto", quantity: 0.45, buy_price: 2150000, current_price: 2280000 },
             { user_id: user.id, name: "ASELS", type: "Hisse", quantity: 150, buy_price: 55.4, current_price: 62.1 },
-            { user_id: user.id, name: "ALTIN (XAU)", type: "Emtia", quantity: 15, buy_price: 2450, current_price: 2580 },
+            { user_id: user.id, name: "Gram Altın", type: "Emtia", quantity: 15, buy_price: 2850, current_price: 3000 },
             { user_id: user.id, name: "USD", type: "Döviz", quantity: 1200, buy_price: 32.2, current_price: 32.55 }
           ]);
 

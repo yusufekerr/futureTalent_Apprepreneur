@@ -1,7 +1,7 @@
 import type { Asset } from "../types/portfolio";
 
 // Base prices lookup for simulation baseline fallback
-const BASELINE_PRICES: Record<string, number> = {
+export const BASELINE_PRICES: Record<string, number> = {
   BTC: 2350000,
   ETH: 115000,
   SOL: 5400,
@@ -10,13 +10,25 @@ const BASELINE_PRICES: Record<string, number> = {
   USD: 33.25,
   EUR: 36.12,
   GBP: 42.45,
+  CHF: 37.10,
   ASELS: 64.80,
   THYAO: 312.50,
   EREGL: 52.40,
   TUPRS: 168.20,
+  BIMAS: 420.00,
+  ISCTR: 15.50,
+  KCHOL: 230.00,
   XAU: 2480, // Gold per gram
   XAG: 31.80, // Silver per gram
-  TECD: 145.60 // A popular fund
+  "GRAM ALTIN": 3000,
+  "ÇEYREK ALTIN": 4900,
+  "CUMHURİYET ALTINI": 19800,
+  "CUMHURIYET ALTINI": 19800,
+  "GRAM GÜMÜŞ": 38,
+  "GRAM GUMUS": 38,
+  TECD: 145.60, // A popular fund
+  AFT: 24.50,
+  MAC: 12.80
 };
 
 // CoinGecko API Mapping
