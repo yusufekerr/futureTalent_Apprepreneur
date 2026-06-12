@@ -5,8 +5,9 @@ InvestWatch, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca
 ## Proje Durumu
 
 - Urun: InvestWatch
+- Canlı Sürüm (Web): [invest-watch.netlify.app](https://invest-watch.netlify.app)
 - Surum: 1.0 (MVP)
-- Platform: iOS / Android (cross-platform)
+- Platform: iOS / Android / Web (cross-platform)
 - Stack: Expo + TypeScript + Expo Router + Supabase
 - Guncel faz: **Faz 9 – Dinamik Varlık Seçimi, Kısmi Satış & Yerelleştirme** ✅ (Tamamlandı)
 
