@@ -30,7 +30,7 @@ The application includes a mock AI system that analyzes user activity over the l
 - **Styling:** Tailwind CSS
 - **State Management:** React Hooks
 - **Persistence:** localStorage
-- **Deployment:** Railway
+- **Deployment:** Netlify
 
 ---
 
@@ -67,7 +67,7 @@ npm run dev
 
 # 🌐 Live Demo
 
-👉 [Live App](https://futuretalentapprepreneur-production.up.railway.app/)
+👉 [Live App](https://ai-studytracker.netlify.app/)
 
 ---
 
