@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { Platform, View, StyleSheet } from "react-native";
+import { Home, Briefcase, Plus, Brain, Bell } from "lucide-react-native";
 
 import { colors, shadows } from "@/design/tokens";
 
@@ -37,7 +37,7 @@ export default function TabsLayout() {
         options={{ 
           title: "Özet",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "home-variant" : "home-variant-outline"} size={26} color={color} />
+            <Home size={22} color={color} fill={focused ? color : "transparent"} strokeWidth={focused ? 2.5 : 2} />
           )
         }} 
       />
@@ -46,7 +46,7 @@ export default function TabsLayout() {
         options={{ 
           title: "Portföy",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "briefcase" : "briefcase-outline"} size={26} color={color} />
+            <Briefcase size={22} color={color} fill={focused ? color : "transparent"} strokeWidth={focused ? 2.5 : 2} />
           )
         }} 
       />
@@ -56,7 +56,7 @@ export default function TabsLayout() {
           title: "Ekle",
           tabBarIcon: () => (
             <View style={styles.addWrap}>
-              <MaterialCommunityIcons name="plus" size={30} color="#FFFFFF" />
+              <Plus size={28} color="#FFFFFF" strokeWidth={3} />
             </View>
           )
         }} 
@@ -66,7 +66,7 @@ export default function TabsLayout() {
         options={{ 
           title: "AI Danışman",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "brain" : "brain"} size={26} color={color} style={{ opacity: focused ? 1 : 0.65 }} />
+            <Brain size={22} color={color} fill={focused ? color : "transparent"} strokeWidth={focused ? 2.5 : 2} />
           )
         }} 
       />
@@ -75,7 +75,7 @@ export default function TabsLayout() {
         options={{ 
           title: "Alarmlar",
           tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons name={focused ? "bell" : "bell-outline"} size={26} color={color} />
+            <Bell size={22} color={color} fill={focused ? color : "transparent"} strokeWidth={focused ? 2.5 : 2} />
           )
         }} 
       />

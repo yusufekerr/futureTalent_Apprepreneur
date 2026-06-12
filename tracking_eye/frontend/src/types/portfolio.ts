@@ -29,3 +29,14 @@ export type PriceAlert = {
 };
 
 export type PriceAlertDraft = Omit<PriceAlert, "id" | "isTriggered" | "createdAt">;
+
+export type TransactionType = "ADD" | "REMOVE" | "UPDATE" | "SYNC";
+
+export type Transaction = {
+  id: string;
+  type: TransactionType;
+  assetName: string;
+  quantity?: number;
+  price?: number;
+  timestamp: string;
+};

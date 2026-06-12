@@ -1,10 +1,10 @@
-# TrackingEye
+# InvestWatch
 
-TrackingEye, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca takip etmesini hedefleyen bir MVP urunudur.
+InvestWatch, yatirima yeni baslayan kullanicilarin portfoylerini mobilde kolayca takip etmesini hedefleyen bir MVP urunudur.
 
 ## Proje Durumu
 
-- Urun: TrackingEye
+- Urun: InvestWatch
 - Surum: 1.0 (MVP)
 - Platform: iOS / Android (cross-platform)
 - Stack: Expo + TypeScript + Expo Router + Supabase

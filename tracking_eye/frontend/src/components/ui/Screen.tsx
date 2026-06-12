@@ -18,7 +18,7 @@ export function Screen({ children, scroll = true }: ScreenProps) {
           {children}
         </ScrollView>
       ) : (
-        <View style={styles.content}>{children}</View>
+        <View style={styles.flexContent}>{children}</View>
       )}
     </SafeAreaView>
   );
@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg
   },
   content: {
+    padding: spacing.xl,
+    gap: spacing.lg
+  },
+  flexContent: {
+    flex: 1,
     padding: spacing.xl,
     gap: spacing.lg
   }

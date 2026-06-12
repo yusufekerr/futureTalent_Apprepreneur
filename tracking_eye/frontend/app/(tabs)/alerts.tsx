@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { TrendingUp, TrendingDown, BellOff, Trash2 } from "lucide-react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -111,8 +111,7 @@ export default function AlertsScreen() {
               ]}
               onPress={() => setCondition("above")}
             >
-              <MaterialCommunityIcons 
-                name="trending-up" 
+              <TrendingUp 
                 size={18} 
                 color={condition === "above" ? "#FFFFFF" : colors.textPrimary} 
               />
@@ -133,8 +132,7 @@ export default function AlertsScreen() {
               ]}
               onPress={() => setCondition("below")}
             >
-              <MaterialCommunityIcons 
-                name="trending-down" 
+              <TrendingDown 
                 size={18} 
                 color={condition === "below" ? "#FFFFFF" : colors.textPrimary} 
               />
@@ -175,7 +173,7 @@ export default function AlertsScreen() {
         
         {alerts.length === 0 ? (
           <Card style={styles.emptyCard}>
-            <MaterialCommunityIcons name="bell-off-outline" size={32} color={colors.textSecondary} />
+            <BellOff size={32} color={colors.textSecondary} />
             <Text style={styles.emptyText}>Henüz kurulmuş bir fiyat alarmınız bulunmuyor.</Text>
           </Card>
         ) : (
@@ -206,7 +204,7 @@ export default function AlertsScreen() {
                   style={styles.deleteButton}
                   onPress={() => handleDeleteAlert(alert.id)}
                 >
-                  <MaterialCommunityIcons name="trash-can-outline" size={20} color={colors.danger} />
+                  <Trash2 size={20} color={colors.danger} />
                 </TouchableOpacity>
               </View>
             ))}

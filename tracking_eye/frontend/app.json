@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TrackingEye",
-    "slug": "tracking-eye",
+    "name": "InvestWatch",
+    "slug": "invest-watch",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -9,14 +9,14 @@
       "supportsTablet": false
     },
     "android": {
-      "package": "com.anonymous.trackingeye"
+      "package": "com.anonymous.investwatch"
     },
     "plugins": [
       "expo-router",
       "expo-asset",
       "expo-font"
     ],
-    "scheme": "trackingeye",
+    "scheme": "investwatch",
     "extra": {
       "EXPO_PUBLIC_SUPABASE_URL": "",
       "EXPO_PUBLIC_SUPABASE_ANON_KEY": ""

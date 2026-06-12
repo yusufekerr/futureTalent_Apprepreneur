@@ -1,12 +1,12 @@
-# TrackingEye – Teknoloji Yığını (Tech Stack)
+# InvestWatch – Teknoloji Yığını (Tech Stack)
 
-Bu doküman, TrackingEye projesinde tercih edilen teknolojileri, kütüphaneleri, servis seçimlerinin gerekçelerini ve geliştirme sürecinde yapay zekanın (AI) nasıl kullanıldığını açıklamaktadır.
+Bu doküman, InvestWatch projesinde tercih edilen teknolojileri, kütüphaneleri, servis seçimlerinin gerekçelerini ve geliştirme sürecinde yapay zekanın (AI) nasıl kullanıldığını açıklamaktadır.
 
 ---
 
 ## 1. Genel Teknoloji Seçimleri
 
-TrackingEye, modern bir mobil yatırım takip uygulaması olarak tasarlanmıştır. Bu doğrultuda seçilen temel bileşenler şunlardır:
+InvestWatch, modern bir mobil yatırım takip uygulaması olarak tasarlanmıştır. Bu doğrultuda seçilen temel bileşenler şunlardır:
 
 ### 1.1 Frontend: Expo & React Native (TypeScript)
 - **Gerekçe:** 
@@ -49,7 +49,7 @@ Projenin `package.json` bağımlılıkları ve kullanım amaçları şunlardır:
 
 ## 3. Geliştirme Sürecinde AI (Yapay Zeka) Kullanımı
 
-TrackingEye geliştirilirken yapay zeka ajanlarından ve kod asistanlarından yoğun bir şekilde faydalanılmıştır. Alınan tasarım ve geliştirme kararlarında AI'ın rolleri şunlardır:
+InvestWatch geliştirilirken yapay zeka ajanlarından ve kod asistanlarından yoğun bir şekilde faydalanılmıştır. Alınan tasarım ve geliştirme kararlarında AI'ın rolleri şunlardır:
 
 1. **Veritabanı Şemaları ve Güvenlik:** Supabase üzerindeki RLS (Row Level Security) politikalarının ve birleşik indexlerin oluşturulmasında AI asistanları kullanılmıştır.
 2. **Offline/Online Hibrit Tasarım:** Gemini API bağlantısının kopması veya anahtarın girilmemesi durumunda kullanıcıyı hatayla karşılaştırmak yerine çalışan bir `offline-fallback` mekanizması kurgulanmasında AI mimari fikirleri uygulanmıştır.

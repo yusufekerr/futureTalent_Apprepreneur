@@ -1,11 +1,21 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import type { ComponentProps } from "react";
+import { 
+  Info, 
+  AlertTriangle, 
+  AlertOctagon, 
+  Lightbulb, 
+  FileText, 
+  Trash2, 
+  PieChart, 
+  ShieldAlert, 
+  LayoutGrid, 
+  Send, 
+  X 
+} from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -19,15 +29,13 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { colors, radius, shadows, spacing, typography } from "@/design/tokens";
-import { generateAIResponse, getApiKey, saveApiKey, type ChatMessage } from "@/services/ai";
+import { generateAIResponse, getApiKey, type ChatMessage } from "@/services/ai";
 
 export default function AIAdvisorScreen() {
   const { assets, metrics, distribution } = usePortfolio();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState("");
   const [hasApiKey, setHasApiKey] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
@@ -37,9 +45,6 @@ export default function AIAdvisorScreen() {
     const init = async () => {
       const key = await getApiKey();
       setHasApiKey(!!key);
-      if (key) {
-        setApiKeyInput(key);
-      }
 
       setMessages([
         {
@@ -55,14 +60,6 @@ export default function AIAdvisorScreen() {
     init();
   }, []);
 
-  // Save the custom API Key
-  const handleSaveApiKey = async () => {
-    await saveApiKey(apiKeyInput);
-    const key = await getApiKey();
-    setHasApiKey(!!key);
-    setShowSettings(false);
-  };
-
   // Clear message history
   const handleClearHistory = () => {
     setMessages([
@@ -74,7 +71,6 @@ export default function AIAdvisorScreen() {
         timestamp: new Date()
       }
     ]);
-    setShowSettings(false);
   };
 
   // Send a message
@@ -152,32 +148,32 @@ export default function AIAdvisorScreen() {
     const flushAlert = (key: string) => {
       if (!alertType) return null;
       let alertTitle = "BİLGİ";
-      let alertIcon: ComponentProps<typeof MaterialCommunityIcons>["name"] = "information-outline";
+      let AlertIconComponent = Info;
       let alertBg = "#F3F4F6";
       let alertBorderColor = "#D1D5DB";
       let alertTextColor = "#4B5563";
 
       if (alertType === "warning") {
         alertTitle = "UYARI";
-        alertIcon = "alert-outline";
+        AlertIconComponent = AlertTriangle;
         alertBg = "#FEF3C7";
         alertBorderColor = "#F59E0B";
         alertTextColor = "#B45309";
       } else if (alertType === "caution") {
         alertTitle = "DİKKAT";
-        alertIcon = "alert-octagon-outline";
+        AlertIconComponent = AlertOctagon;
         alertBg = "#FEE2E2";
         alertBorderColor = "#EF4444";
         alertTextColor = "#B91C1C";
       } else if (alertType === "tip") {
         alertTitle = "İPUCU";
-        alertIcon = "lightbulb-on-outline";
+        AlertIconComponent = Lightbulb;
         alertBg = "#ECFDF5";
         alertBorderColor = "#10B981";
         alertTextColor = "#047857";
       } else if (alertType === "note") {
         alertTitle = "NOT";
-        alertIcon = "file-document-edit-outline";
+        AlertIconComponent = FileText;
         alertBg = "#EFF6FF";
         alertBorderColor = "#3B82F6";
         alertTextColor = "#1D4ED8";
@@ -190,7 +186,7 @@ export default function AIAdvisorScreen() {
       return (
         <View key={key} style={[styles.alertContainer, { backgroundColor: alertBg, borderColor: alertBorderColor }]}>
           <View style={styles.alertHeader}>
-            <MaterialCommunityIcons name={alertIcon} size={18} color={alertBorderColor} />
+            <AlertIconComponent size={18} color={alertBorderColor} />
             <Text style={[styles.alertTitle, { color: alertTextColor }]}>{alertTitle}</Text>
           </View>
           <Text style={[styles.alertBodyText, { color: colors.textPrimary }]}>
@@ -279,13 +275,17 @@ export default function AIAdvisorScreen() {
           <View style={styles.statusBadge}>
             <View style={[styles.statusDot, { backgroundColor: hasApiKey ? colors.success : colors.warning }]} />
             <Text style={styles.statusText}>
-              {hasApiKey ? "Canlı (Gemini 1.5)" : "Çevrimdışı Simülatör"}
+              {hasApiKey ? "Canlı (Gemini 2.5)" : "Çevrimdışı Simülatör"}
             </Text>
           </View>
         </View>
         
-        <TouchableOpacity style={styles.settingsButton} onPress={() => setShowSettings(true)}>
-          <MaterialCommunityIcons name="cog-outline" size={24} color={colors.textPrimary} />
+        <TouchableOpacity 
+          style={styles.settingsButton} 
+          onPress={handleClearHistory}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+        >
+          <Trash2 size={22} color={colors.danger} />
         </TouchableOpacity>
       </View>
 
@@ -296,6 +296,7 @@ export default function AIAdvisorScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
         renderItem={({ item }) => {
           const isUser = item.role === "user";
           return (
@@ -327,15 +328,15 @@ export default function AIAdvisorScreen() {
         <View style={styles.quickChipsWrapper}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickChipsScroll}>
             <TouchableOpacity style={styles.chip} onPress={() => handleSendMessage("Portföyümü analiz et")}>
-              <MaterialCommunityIcons name="chart-pie" size={16} color={colors.textPrimary} />
+              <PieChart size={16} color={colors.textPrimary} />
               <Text style={styles.chipText}>Portföy Analizi</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.chip} onPress={() => handleSendMessage("Risk analizi yap")}>
-              <MaterialCommunityIcons name="shield-alert-outline" size={16} color={colors.textPrimary} />
+              <ShieldAlert size={16} color={colors.textPrimary} />
               <Text style={styles.chipText}>Risk Ölçümü</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.chip} onPress={() => handleSendMessage("Çeşitlendirme önerisi ver")}>
-              <MaterialCommunityIcons name="grid-large" size={16} color={colors.textPrimary} />
+              <LayoutGrid size={16} color={colors.textPrimary} />
               <Text style={styles.chipText}>Çeşitlendirme Tavsiyesi</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -363,66 +364,9 @@ export default function AIAdvisorScreen() {
           disabled={inputText.trim() === "" || isGenerating}
           onPress={() => handleSendMessage(inputText)}
         >
-          <MaterialCommunityIcons name="send" size={20} color="#FFFFFF" />
+          <Send size={18} color="#FFFFFF" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
-
-      {/* SETTINGS MODAL */}
-      <Modal
-        visible={showSettings}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowSettings(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <Card style={styles.settingsCard}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>AI Danışman Ayarları</Text>
-              <TouchableOpacity onPress={() => setShowSettings(false)}>
-                <MaterialCommunityIcons name="close" size={24} color={colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.modalBody}>
-              <Text style={styles.modalLabel}>Google Gemini API Key</Text>
-              <TextInput
-                style={styles.modalInput}
-                secureTextEntry
-                placeholder="AI API Key girin..."
-                placeholderTextColor={colors.textMuted}
-                value={apiKeyInput}
-                onChangeText={setApiKeyInput}
-              />
-              <Text style={styles.modalInfo}>
-                API anahtarı yerel cihaz hafızasında güvenli saklanır ve doğrudan Google Gemini sunucularına istek yapmak için kullanılır.
-              </Text>
-              <TouchableOpacity 
-                onPress={() => console.log("Open link")} 
-                style={styles.apiLink}
-              >
-                <Text style={styles.apiLinkLabel}>
-                  Ücretsiz API Key Al (Google AI Studio)
-                </Text>
-              </TouchableOpacity>
-
-              <View style={styles.modalActions}>
-                <TouchableOpacity 
-                  style={[styles.modalBtn, styles.clearBtn]} 
-                  onPress={handleClearHistory}
-                >
-                  <Text style={styles.clearBtnText}>Sohbeti Temizle</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.modalBtn, styles.saveBtn]} 
-                  onPress={handleSaveApiKey}
-                >
-                  <Text style={styles.saveBtnText}>Kaydet</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Card>
-        </View>
-      </Modal>
     </Screen>
   );
 }
@@ -468,7 +412,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border
   },
   listContent: {
-    paddingVertical: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: 100,
     gap: spacing.md
   },
   messageBubbleWrapper: {

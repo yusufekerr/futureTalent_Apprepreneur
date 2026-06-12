@@ -1,9 +1,8 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { BellRing } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFonts } from "expo-font";
 
 import { AuthProvider as RealAuthProvider } from "@/context/AuthContext";
 import { PortfolioProvider } from "@/context/PortfolioContext";
@@ -20,7 +19,7 @@ function AppContent() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="asset/[id]" options={{ headerShown: true, title: "Varlık Detayı" }} />
+        <Stack.Screen name="asset/[id]" options={{ headerShown: false }} />
       </Stack>
 
       {/* Global Price Alert Overlay Modal */}
@@ -40,7 +39,7 @@ function AppContent() {
                 end={{ x: 1, y: 1 }}
                 style={styles.alertHeader}
               >
-                <MaterialCommunityIcons name="bell-ring" size={40} color="#FFFFFF" />
+                <BellRing size={40} color="#FFFFFF" />
                 <Text style={styles.alertHeaderTitle}>Fiyat Alarmı Tetiklendi!</Text>
               </LinearGradient>
               
@@ -79,14 +78,6 @@ function AppContent() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
-    ...MaterialCommunityIcons.font,
-  });
-
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
-
   return (
     <RealAuthProvider>
       <PortfolioProvider>

@@ -1,7 +1,7 @@
-# TrackingEye – Product Requirements Document (PRD)
+# InvestWatch – Product Requirements Document (PRD)
 
 ## 1) Doküman Bilgileri
-- **Ürün Adı:** TrackingEye  
+- **Ürün Adı:** InvestWatch  
 - **Versiyon:** 1.0 (MVP)  
 - **Aşama:** Faz 7 – MVP Sonrası (Tüm fonksiyonlar ve kalite fazı tamamlandı)  
 - **Platform:** Mobile (iOS / Android, cross-platform)  
@@ -11,7 +11,7 @@
 Yatırıma yeni başlayan kullanıcılar, yatırımlarını düzenli takip etmekte ve alışkanlık geliştirmekte zorlanmaktadır. Kullanıcılar; varlıklarını tek bir yerde kaydetmek, toplam birikimlerini görmek, kâr/zarar durumunu izlemek ve portföy dağılımını anlamak istemektedir.
 
 ## 3) Ürün Vizyonu ve Amacı
-TrackingEye, özellikle genç ve yeni başlayan yatırımcılara yatırım alışkanlığı kazandırmayı hedefler. Ürün, kullanıcıların yatırımlarını tek ekrandan takip etmesini sağlayarak birikim farkındalığını artırır ve karar alma süreçlerini kolaylaştırır.
+InvestWatch, özellikle genç ve yeni başlayan yatırımcılara yatırım alışkanlığı kazandırmayı hedefler. Ürün, kullanıcıların yatırımlarını tek ekrandan takip etmesini sağlayarak birikim farkındalığını artırır ve karar alma süreçlerini kolaylaştırır.
 
 ## 4) Hedef Kullanıcı Profili
 - Yatırıma yeni başlayan bireysel yatırımcılar

@@ -1,6 +1,6 @@
-# TrackingEye – Geliştirme Günlüğü (Progress Log)
+# InvestWatch – Geliştirme Günlüğü (Progress Log)
 
-Bu dokümanda, TrackingEye projesinin başlangıcından teslim aşamasına kadar olan geliştirme serüveni, tamamlanan fazlar, alınan kritik kararlar ve çözülen teknik problemler kayıt altında tutulmaktadır.
+Bu dokümanda, InvestWatch projesinin başlangıcından teslim aşamasına kadar olan geliştirme serüveni, tamamlanan fazlar, alınan kritik kararlar ve çözülen teknik problemler kayıt altında tutulmaktadır.
 
 ---
 

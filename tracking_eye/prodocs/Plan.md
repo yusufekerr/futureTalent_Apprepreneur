@@ -1,4 +1,4 @@
-# TrackingEye MVP – Geliştirme Planı
+# InvestWatch MVP – Geliştirme Planı
 
 Bu dosya, [README.md](README.md) ve [Yatirim-Takibi-MVP-PRD.md](Yatirim-Takibi-MVP-PRD.md) belgelerine dayanır. Ürün gereksinimlerinin tek kaynağı PRD'dir.
 

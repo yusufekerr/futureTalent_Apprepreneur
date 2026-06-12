@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { ArrowLeft } from "lucide-react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -82,10 +84,29 @@ export default function AddAssetScreen() {
     }
   };
 
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/(tabs)/dashboard");
+    }
+  };
+
   return (
     <Screen>
+      <View style={styles.headerRow}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={handleBack}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
+          <ArrowLeft size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Varlık Ekle</Text>
+        <View style={{ width: 40 }} />
+      </View>
       <View style={styles.headerWrap}>
-        <SectionHeader title="Varlık Ekle" subtitle="Portföyünüzü genişletin." />
+        <SectionHeader title="Yeni Varlık" subtitle="Portföyünüzü genişletin." />
       </View>
       <Card>
         <View style={styles.form}>
@@ -175,5 +196,26 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     fontSize: typography.caption
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.xs,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: colors.textPrimary,
   }
 });

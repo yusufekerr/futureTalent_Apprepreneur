@@ -1,11 +1,11 @@
-# TrackingEye – Tasarım Sistemi (Design System)
+# InvestWatch – Tasarım Sistemi (Design System)
 
-Bu doküman, TrackingEye uygulamasının görsel kimliğini, tasarım kararlarını, kullanılabilir belirteçleri (tokens) ve kullanıcı arayüzü (UI) kurallarını belgelemektedir.
+Bu doküman, InvestWatch uygulamasının görsel kimliğini, tasarım kararlarını, kullanılabilir belirteçleri (tokens) ve kullanıcı arayüzü (UI) kurallarını belgelemektedir.
 
 ---
 
 ## 1. Tasarım Teması: Premium Neobank
-TrackingEye, minimalist, temiz ve üst düzey finansal uygulamaların (neobank) tasarım estetiğini benimser. Canlı grafikler yerine sade geçişler, derin gölgeler, belirgin yuvarlatılmış köşeler ve yüksek okunurluk sunan koyu renk tipografi tercih edilmiştir.
+InvestWatch, minimalist, temiz ve üst düzey finansal uygulamaların (neobank) tasarım estetiğini benimser. Canlı grafikler yerine sade geçişler, derin gölgeler, belirgin yuvarlatılmış köşeler ve yüksek okunurluk sunan koyu renk tipografi tercih edilmiştir.
 
 Tasarım belirteçlerine kod seviyesinde [tokens.ts](file:///c:/Users/Yusuf/Desktop/futureTalent_Apprepreneur/tracking_eye/frontend/src/design/tokens.ts) dosyasından erişilebilir.
 

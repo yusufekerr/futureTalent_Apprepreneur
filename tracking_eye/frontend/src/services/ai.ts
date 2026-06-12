@@ -165,7 +165,7 @@ export async function generateAIResponse(
 
   // Prepare system context prompt
   const systemContext = `
-Sen TrackingEye isimli neobank tarzı, şık ve mobil yatırım takip uygulamasının yapay zeka finansal danışmanısın.
+Sen InvestWatch isimli neobank tarzı, şık ve mobil yatırım takip uygulamasının yapay zeka finansal danışmanısın.
 Görevin kullanıcının mevcut portföyünü incelemek, yatırım alışkanlıklarını geliştirmesine destek olmak ve finansal farkındalığı artırmaktır.
 
 Kullanıcının Portföy Verileri:
@@ -235,7 +235,7 @@ Kullanıcının Portföy Verileri:
           },
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1500
+            maxOutputTokens: 4096
           }
         })
       }

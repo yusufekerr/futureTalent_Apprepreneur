@@ -1,10 +1,19 @@
 import { useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { TrendingUp, Coins, Sparkles, Layers, DollarSign } from "lucide-react-native";
 
 import { Card } from "@/components/ui/Card";
 import { colors, radius, spacing, typography } from "@/design/tokens";
 import type { Asset } from "@/types/portfolio";
 import { formatCurrency, getAssetPnL, getAssetValue, getTypeColor } from "@/utils/portfolio";
+
+const iconMap = {
+  Hisse: TrendingUp,
+  Kripto: Coins,
+  Emtia: Sparkles,
+  Fon: Layers,
+  Döviz: DollarSign
+};
 
 export function AssetRow({
   asset,
@@ -44,7 +53,12 @@ export function AssetRow({
         <Card style={styles.cardOverride}>
           <View style={styles.row}>
             <View style={styles.left}>
-              <View style={[styles.iconDot, { backgroundColor: getTypeColor(asset.type) }]} />
+              <View style={[styles.iconDot, { backgroundColor: getTypeColor(asset.type) + "1A" }]}>
+                {(() => {
+                  const IconComponent = iconMap[asset.type as keyof typeof iconMap] || TrendingUp;
+                  return <IconComponent size={18} color={getTypeColor(asset.type)} />;
+                })()}
+              </View>
               <View style={styles.textWrap}>
                 <Text style={styles.name}>{asset.name}</Text>
                 <Text style={styles.meta}>
@@ -89,6 +103,8 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radius.md,
+    justifyContent: "center",
+    alignItems: "center"
   },
   textWrap: {
     gap: 2

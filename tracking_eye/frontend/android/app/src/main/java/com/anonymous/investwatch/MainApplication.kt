@@ -1,4 +1,4 @@
-package com.anonymous.trackingeye
+package com.anonymous.investwatch
 
 import android.app.Application
 import android.content.res.Configuration

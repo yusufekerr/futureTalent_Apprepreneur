@@ -1,10 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { getUpdatedPrices } from "@/services/marketData";
 import type { Database } from "@/types/database.types";
-import type { Asset, AssetDraft, PortfolioSnapshot } from "@/types/portfolio";
+import type { Asset, AssetDraft, PortfolioSnapshot, Transaction, TransactionType } from "@/types/portfolio";
 import { getDistribution, getPortfolioMetrics } from "@/utils/portfolio";
 
 /* ------------------------------------------------------------------ */
@@ -32,6 +33,7 @@ function mapRow(row: AssetRow): Asset {
 type PortfolioContextValue = {
   assets: Asset[];
   snapshots: PortfolioSnapshot[];
+  transactions: Transaction[];
   isLoading: boolean;
   error: string | null;
   addAsset: (draft: AssetDraft) => Promise<{ error: string | null }>;
@@ -41,6 +43,7 @@ type PortfolioContextValue = {
   syncMarketPrices: () => Promise<{ error: string | null; assets?: Asset[] }>;
   metrics: ReturnType<typeof getPortfolioMetrics>;
   distribution: ReturnType<typeof getDistribution>;
+  clearTransactions: () => Promise<void>;
 };
 
 const PortfolioContext = createContext<PortfolioContextValue | undefined>(undefined);
@@ -53,6 +56,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [snapshots, setSnapshots] = useState<PortfolioSnapshot[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,11 +109,66 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
+  /* ---- fetch transactions ---- */
+  const fetchTransactions = useCallback(async () => {
+    if (!user) {
+      setTransactions([]);
+      return;
+    }
+    try {
+      const stored = await AsyncStorage.getItem("portfolio_transactions");
+      if (stored) {
+        setTransactions(JSON.parse(stored));
+      } else {
+        setTransactions([]);
+      }
+    } catch (err) {
+      console.error("Error loading transactions:", err);
+    }
+  }, [user]);
+
+  /* ---- add transaction record ---- */
+  const addTransactionRecord = useCallback(async (type: TransactionType, assetName: string, quantity?: number, price?: number) => {
+    try {
+      const newTx: Transaction = {
+        id: `${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        assetName,
+        quantity,
+        price,
+        timestamp: new Date().toISOString()
+      };
+      
+      const stored = await AsyncStorage.getItem("portfolio_transactions");
+      let currentTxList: Transaction[] = [];
+      if (stored) {
+        currentTxList = JSON.parse(stored);
+      }
+      
+      const updatedList = [newTx, ...currentTxList].slice(0, 50);
+      setTransactions(updatedList);
+      await AsyncStorage.setItem("portfolio_transactions", JSON.stringify(updatedList));
+    } catch (err) {
+      console.error("Error saving transaction:", err);
+    }
+  }, []);
+
+  /* ---- clear transactions ---- */
+  const clearTransactions = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem("portfolio_transactions");
+      setTransactions([]);
+    } catch (err) {
+      console.error("Error clearing transactions:", err);
+    }
+  }, []);
+
   // Initial load
   useEffect(() => {
     fetchAssets();
     fetchSnapshots();
-  }, [fetchAssets, fetchSnapshots]);
+    fetchTransactions();
+  }, [fetchAssets, fetchSnapshots, fetchTransactions]);
 
   /* ---- refresh assets and log snapshot helper ---- */
   const refreshAndSnapshot = useCallback(async (): Promise<Asset[]> => {
@@ -159,14 +218,16 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       }
 
       await refreshAndSnapshot();
+      await addTransactionRecord("ADD", draft.name, draft.quantity, draft.buyPrice);
       return { error: null };
     },
-    [user, refreshAndSnapshot]
+    [user, refreshAndSnapshot, addTransactionRecord]
   );
 
   /* ---- update price ---- */
   const updatePrice = useCallback(
     async (id: string, nextPrice: number): Promise<{ error: string | null }> => {
+      const assetToUpdate = assets.find(a => a.id === id);
       const { error: err } = await supabase
         .from("assets")
         .update({ current_price: nextPrice })
@@ -178,14 +239,18 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       }
 
       await refreshAndSnapshot();
+      if (assetToUpdate) {
+        await addTransactionRecord("UPDATE", assetToUpdate.name, assetToUpdate.quantity, nextPrice);
+      }
       return { error: null };
     },
-    [refreshAndSnapshot]
+    [assets, refreshAndSnapshot, addTransactionRecord]
   );
 
   /* ---- remove ---- */
   const removeAsset = useCallback(
     async (id: string): Promise<{ error: string | null }> => {
+      const assetToDelete = assets.find(a => a.id === id);
       const { error: err } = await supabase.from("assets").delete().eq("id", id);
 
       if (err) {
@@ -194,9 +259,12 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       }
 
       await refreshAndSnapshot();
+      if (assetToDelete) {
+        await addTransactionRecord("REMOVE", assetToDelete.name, assetToDelete.quantity, assetToDelete.buyPrice);
+      }
       return { error: null };
     },
-    [refreshAndSnapshot]
+    [assets, refreshAndSnapshot, addTransactionRecord]
   );
 
   /* ---- sync market prices ---- */
@@ -224,6 +292,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       }
 
       const freshAssets = await refreshAndSnapshot();
+      await addTransactionRecord("SYNC", "Portföy Senkronizasyonu", undefined, undefined);
       setIsLoading(false);
       return { error: null, assets: freshAssets };
     } catch (err) {
@@ -232,7 +301,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       setError(errMsg);
       return { error: errMsg };
     }
-  }, [user, assets, refreshAndSnapshot]);
+  }, [user, assets, refreshAndSnapshot, addTransactionRecord]);
 
   /* ---- derived ---- */
   const metrics = useMemo(() => getPortfolioMetrics(assets), [assets]);
@@ -242,6 +311,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     () => ({
       assets,
       snapshots,
+      transactions,
       isLoading,
       error,
       addAsset,
@@ -250,9 +320,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       refresh: fetchAssets,
       syncMarketPrices,
       metrics,
-      distribution
+      distribution,
+      clearTransactions
     }),
-    [assets, snapshots, isLoading, error, addAsset, updatePrice, removeAsset, fetchAssets, syncMarketPrices, metrics, distribution]
+    [assets, snapshots, transactions, isLoading, error, addAsset, updatePrice, removeAsset, fetchAssets, syncMarketPrices, metrics, distribution, clearTransactions]
   );
 
   return <PortfolioContext.Provider value={value}>{children}</PortfolioContext.Provider>;
